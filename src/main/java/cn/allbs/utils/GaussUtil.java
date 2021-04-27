@@ -219,12 +219,12 @@ public class GaussUtil {
      * @param l 太阳辐射等级
      * @return 空间上某点的污染物浓度 mg/m3
      */
-    private double groundPointSource(double q, double u, double x, double y, double z, Integer l) {
+    public double groundPointSource(double q, double u, double x, double y, double z, Integer l) {
         // y轴标准差
         double sigmaY = getSigmaY(x, SolarRadiationEnum.solarRadiationLevel(l, u));
         // z轴标准差
         double sigmaZ = getSigmaZ(x, SolarRadiationEnum.solarRadiationLevel(l, u));
-        return q / (Math.PI * u * sigmaY * sigmaZ) * Math.exp((Math.pow(y, 2) / Math.pow(sigmaY, 2) + Math.pow(z, 2) / Math.pow(sigmaZ, 2)) / 2 * -1) * Math.pow(10, 6);
+        return (q / (Math.PI * u * sigmaY * sigmaZ)) * Math.exp((Math.pow(y, 2) / Math.pow(sigmaY, 2) + Math.pow(z, 2) / Math.pow(sigmaZ, 2)) / 2 * -1) * Math.pow(10, 6);
     }
 
 
@@ -240,13 +240,27 @@ public class GaussUtil {
      * @param l 太阳辐射等级
      * @return 空间上某点的污染物浓度 mg/m3
      */
-    private double highPowerContinuousDiffusion(double q, double u, double h, double x, double y, double z, Integer l) {
+    public double highPowerContinuousDiffusion(double q, double u, double h, double x, double y, double z, Integer l) {
         // y轴标准差
         double sigmaY = getSigmaY(x, SolarRadiationEnum.solarRadiationLevel(l, u));
         // z轴标准差
         double sigmaZ = getSigmaZ(x, SolarRadiationEnum.solarRadiationLevel(l, u));
-        return q / (2 * Math.PI * u * sigmaY * sigmaZ) * Math.exp(Math.pow(y, 2) * -1 / 2 / Math.pow(sigmaY, 2)) * (Math.exp(Math.pow(z - h, 2) * -1 / 2 / Math.pow(sigmaZ, 2)) + Math.exp(Math.pow(z + h, 2) * -1 / 2 / Math.pow(sigmaZ, 2))) * Math.pow(10, 6);
-//        return q / (Math.PI * 0.09 * u * Math.pow(x, 1.7)) * Math.exp(0 - (Math.pow(y, 2) / 0.08 / Math.pow(x, 1.8))) * (Math.exp(0 - Math.pow(z - h, 2) / 0.08 / Math.pow(x, 1.6)) + Math.exp(0 - Math.pow(z + h, 2) / 0.08 / Math.pow(x, 1.6))) * Math.pow(10, 6);
+        return (q / (2 * Math.PI * u * sigmaY * sigmaZ)) * Math.exp(Math.pow(y, 2) * -1 / 2 / Math.pow(sigmaY, 2)) * (Math.exp(Math.pow(z - h, 2) * -1 / 2 / Math.pow(sigmaZ, 2)) + Math.exp(Math.pow(z + h, 2) * -1 / 2 / Math.pow(sigmaZ, 2))) * Math.pow(10, 6);
+    }
+
+    /**
+     * 高斯烟羽不带入扩散系数
+     *
+     * @param q 物料连续泄漏的质量流量，单位kg/s
+     * @param u 平均风速m/s
+     * @param h 泄露源源高
+     * @param x x距离
+     * @param y y距离
+     * @param z z距离
+     * @return 空间上某点的污染物浓度 mg/m3
+     */
+    public double powerContinuousDiffusionWithoutSigma(double q, double u, double h, double x, double y, double z) {
+        return q / (0.09 * Math.PI * u * Math.pow(x, 1.7)) * Math.exp(0 - Math.pow(y, 2) / 0.08 / Math.pow(x, 1.8)) * (Math.exp(0 - Math.pow(z - h, 2) / 0.08 / Math.pow(x, 1.6)) + Math.exp(0 - Math.pow(z + h, 2) / 0.08 / Math.pow(x, 1.6))) * Math.pow(10, 6);
     }
 
     /**
@@ -260,12 +274,29 @@ public class GaussUtil {
      * @param l 太阳辐射等级
      * @return 空间上某点的污染物浓度 mg/m3
      */
-    private double allGroundReflection(double q, double u, double h, double x, double y, Integer l) {
+    public double allGroundReflection(double q, double u, double h, double x, double y, Integer l) {
         // y轴标准差
         double sigmaY = getSigmaY(x, SolarRadiationEnum.solarRadiationLevel(l, u));
         // z轴标准差
         double sigmaZ = getSigmaZ(x, SolarRadiationEnum.solarRadiationLevel(l, u));
-        return q / (Math.PI * u * sigmaY * sigmaZ) * Math.exp((Math.pow(y, 2) / Math.pow(sigmaY, 2) + Math.pow(h, 2) / Math.pow(sigmaZ, 2)) / 2 * -1);
+        return (q / (Math.PI * u * sigmaY * sigmaZ)) * (Math.exp((Math.pow(y, 2) / Math.pow(sigmaY, 2) + Math.pow(h, 2) / Math.pow(sigmaZ, 2)) / 2 * -1)) * Math.pow(10, 6);
+    }
+
+
+    /**
+     * 高斯烟团模型(短时间内形成毒气云团，扩散时间远大于泄漏时间的扩散) 不包含系数计算
+     *
+     * @param q 瞬时排放的物料质量 kg
+     * @param u 平均风速 m/s
+     * @param t 扩散时间 s
+     * @param x 空间点 x距离
+     * @param y 空间点y距离
+     * @param z 空间点 z距离
+     * @return 气体浓度 mg/m3
+     */
+    public double smokeConcentration(double q, double u, double t, double x, double y, double z) {
+        final double v = 2 * Math.pow(0.2 * Math.pow(x, 0.9), 2);
+        return (q / (0.09 * 0.2 * 25 * Math.pow(x, 2.6))) * Math.exp(0 - Math.pow(x - u * t, 2) / v - Math.pow(y, 2) / v - Math.pow(z, 2) / (2 * Math.pow(0.2 * Math.pow(x, 0.8), 2))) * Math.pow(10, 6);
     }
 
     /**
@@ -276,7 +307,7 @@ public class GaussUtil {
      * @param ws 环境风速 单位m/s
      * @return 烟云抬升高度 m
      */
-    private double liftingHeightOfSmokeCloud(double vs, double d, double ws) {
+    public double liftingHeightOfSmokeCloud(double vs, double d, double ws) {
         return 2.4 * vs * d / ws;
     }
 
@@ -286,18 +317,99 @@ public class GaussUtil {
      * @param centerLng 中心位置经度
      * @param centerLat 中心位置维度
      * @param ws        风速
-     * @param s         秒
+     * @param t         秒
      * @param h         高度
      * @param q         连续排放泄露的速录
+     * @param angle     风向角度
      * @return 气体爆破点点为中心点的一个空间四方体的8个角的坐标及浓度
      */
-
-    private List<Map<String, Double>> getGaussSmokePoints(double centerLng, double centerLat, double ws, double s, double h, double q) {
-        return new ArrayList<Map<String, Double>>();
+    public List<Map<String, Double>> getGaussSmokePoints(double centerLng, double centerLat, double ws, double t, double h, double q, double angle) {
+        // 默认设置扩散速度为1，步长为1m
+        return getGaussSmokePoints(centerLng, centerLat, ws, t, h, q, 1, 1, angle);
     }
 
     /**
-     * 高斯烟羽模型-高架点源
+     * 高速烟团模型
+     *
+     * @param centerLng 中心位置经度
+     * @param centerLat 中心位置维度
+     * @param ws        风速
+     * @param t         秒
+     * @param h         高度
+     * @param q         连续排放泄露的速录
+     * @param speed     播放速度
+     * @param step      步长
+     * @param angle     风向角度
+     * @return 气体爆破点点为中心点的一个空间四方体的8个角的坐标及浓度
+     */
+    public List<Map<String, Double>> getGaussSmokePoints(double centerLng, double centerLat, double ws, double t, double h, double q, int speed, double step, double angle) {
+        // 平移距离x
+        double totalX = ws * t * speed;
+        // 平移距离/步长向上取整
+        List<Double> xRange = CollUtil.toList(totalX, -totalX);
+        List<Double> yRange = CollUtil.toList(totalX, -totalX);
+        List<Double> zRange = CollUtil.toList(h);
+        int section = Convert.toInt(Math.ceil(totalX / step));
+        for (int index = 0; index < section; index++) {
+            if (index != 0) {
+                CommonUtil.notContainAdd(xRange, index * step);
+                CommonUtil.notContainAdd(xRange, -index * step);
+            }
+            CommonUtil.notContainAdd(yRange, index * step);
+            CommonUtil.notContainAdd(yRange, -index * step);
+            CommonUtil.notContainAdd(zRange, h + index * step);
+            if (h - index * step <= 0) {
+                CommonUtil.notContainAdd(zRange, 0D);
+            } else {
+                CommonUtil.notContainAdd(zRange, h - index * step);
+            }
+        }
+        List<Map<String, Double>> cMapList = new ArrayList<>();
+        for (int i = 0; i < xRange.size(); i++) {
+            for (int j = 0; j < yRange.size(); j++) {
+                for (int k = 0; k < zRange.size(); k++) {
+                    Map<String, Double> cMap = new HashMap<>(5);
+                    double x = xRange.get(i);
+                    double y = yRange.get(j);
+                    double z = zRange.get(k);
+                    cMap.put(CommonConstant.HEIGHT, z);
+                    double c;
+                    c = NumberUtil.round(smokeConcentration(q, ws, t, x, y, z), 3).doubleValue();
+                    if (c == 0) {
+                        continue;
+                    }
+                    cMap.put(CommonConstant.POLLUTANT_CONCENTRATION, c);
+                    lngLatMapCount(x, y, centerLng, centerLat, angle, cMap);
+                    cMapList.add(cMap);
+                }
+            }
+        }
+        return cMapList;
+    }
+
+
+    /**
+     * 高斯烟羽模型-高架点源 包含系数计算 不指定速度和步长取值
+     *
+     * @param centerLng 事故发生时的经度
+     * @param centerLat 事故发生时的纬度
+     * @param ws        平均风速 m/s 只考虑横向风
+     * @param h         烟囱高度 m
+     * @param q         连续泄露的质量流量 kg/s
+     * @param d         泄露出口直径 单位m
+     * @param w         相对分子质量
+     * @param l         太阳辐射等级
+     * @param t         泄露后经过的时间 s
+     * @param angle     风向以正北为0度 顺时针
+     * @return 以泄露点为中心点的半个空间四方体正方向上的18个角的坐标及浓度 Mg/m3
+     */
+    public List<Map<String, Double>> getGaussPlumePointsInElevated(double centerLng, double centerLat, double ws, double h, double q, double d, double w, Integer l, int t, double angle) {
+        // 默认速度一倍, 默认步长为1m
+        return getGaussPlumePointsInElevated(centerLng, centerLat, ws, h, q, d, w, l, t, 1, angle, 1);
+    }
+
+    /**
+     * 高斯烟羽模型-高架点源 包含系数计算 指定速度和步长取值
      *
      * @param centerLng 事故发生时的经度
      * @param centerLat 事故发生时的纬度
@@ -313,10 +425,7 @@ public class GaussUtil {
      * @param step      步长
      * @return 以泄露点为中心点的半个空间四方体正方向上的18个角的坐标及浓度 Mg/m3
      */
-    public List<Map<String, Double>> getGaussPlumePointsInElevated(double centerLng, double centerLat, double ws, double h, double q, double d, double w, Integer l, int t, Integer speed, double angle, double step) {
-        if (speed == null || speed <= 0) {
-            speed = 1;
-        }
+    public List<Map<String, Double>> getGaussPlumePointsInElevated(double centerLng, double centerLat, double ws, double h, double q, double d, double w, Integer l, int t, int speed, double angle, double step) {
         // 计算气云释放速度
         double vs = q / (1000 / 22.4 * w / 1000) / Math.PI * Math.pow(d / 2, 2);
         // 泄露源的源高
@@ -360,26 +469,7 @@ public class GaussUtil {
                         continue;
                     }
                     cMap.put(CommonConstant.POLLUTANT_CONCENTRATION, c);
-                    Map<String, Double> lngLatMap = new HashMap<>(4);
-                    // 计算经纬度
-                    if (x == 0 && y == 0) {
-                        lngLatMap.put(CommonConstant.LONGITUDE, centerLng);
-                        lngLatMap.put(CommonConstant.LATITUDE, centerLat);
-                    } else if (x == 0) {
-                        lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(90 - angle, centerLng, centerLat, y);
-                    } else if (y == 0) {
-                        lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle, centerLng, centerLat, x);
-                    } else {
-                        double dis = Math.sqrt(x * x + y * y);
-                        double ag = Math.toDegrees(Math.atan2(Math.abs(y), x));
-                        if (y > 0) {
-                            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle - ag, centerLng, centerLat, dis);
-                        } else {
-                            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + ag, centerLng, centerLat, dis);
-                        }
-                    }
-                    cMap.put(CommonConstant.LONGITUDE, lngLatMap.get(CommonConstant.LONGITUDE));
-                    cMap.put(CommonConstant.LATITUDE, lngLatMap.get(CommonConstant.LATITUDE));
+                    lngLatMapCount(x, y, centerLng, centerLat, angle, cMap);
                     cMapList.add(cMap);
                 }
             }
@@ -388,7 +478,24 @@ public class GaussUtil {
     }
 
     /**
-     * 高斯烟羽模型-地面点源
+     * 高斯烟羽模型-地面点源 包含系数计算
+     *
+     * @param centerLng 事故发生时的经度
+     * @param centerLat 事故发生时的纬度
+     * @param ws        平均风速 m/s 只考虑横向风
+     * @param q         连续泄露的质量流量 kg/s
+     * @param l         太阳辐射等级
+     * @param t         泄露后经过的时间 s
+     * @param angle     风向以正北为0度 顺时针
+     * @return 以泄露点为中心点的半个空间四方体正方向上的18个角的坐标及浓度 Mg/m3
+     */
+    public List<Map<String, Double>> getGaussPlumePointsInFloor(double centerLng, double centerLat, double ws, double q, Integer l, int t, double angle) {
+        // 默认播放速度为1倍速, 默认步长为1米
+        return getGaussPlumePointsInFloor(centerLng, centerLat, ws, q, l, t, 1, angle, 1);
+    }
+
+    /**
+     * 高斯烟羽模型-地面点源 包含系数计算
      *
      * @param centerLng 事故发生时的经度
      * @param centerLat 事故发生时的纬度
@@ -401,10 +508,7 @@ public class GaussUtil {
      * @param step      步长
      * @return 以泄露点为中心点的半个空间四方体正方向上的18个角的坐标及浓度 Mg/m3
      */
-    public List<Map<String, Double>> getGaussPlumePointsInFloor(double centerLng, double centerLat, double ws, double q, Integer l, int t, Integer speed, double angle, double step) {
-        if (speed == null || speed <= 0) {
-            speed = 1;
-        }
+    public List<Map<String, Double>> getGaussPlumePointsInFloor(double centerLng, double centerLat, double ws, double q, Integer l, int t, int speed, double angle, double step) {
         // 平移距离x
         double totalX = ws * t * speed;
         // 平移距离/步长向上取整
@@ -434,30 +538,118 @@ public class GaussUtil {
                         break;
                     }
                     cMap.put(CommonConstant.POLLUTANT_CONCENTRATION, c);
-                    Map<String, Double> lngLatMap = new HashMap<>(4);
-                    // 计算经纬度
-                    if (x == 0 && y == 0) {
-                        lngLatMap.put(CommonConstant.LONGITUDE, centerLng);
-                        lngLatMap.put(CommonConstant.LATITUDE, centerLat);
-                    } else if (x == 0) {
-                        lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(90 - angle, centerLng, centerLat, y);
-                    } else if (y == 0) {
-                        lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle, centerLng, centerLat, x);
-                    } else {
-                        double dis = Math.sqrt(x * x + y * y);
-                        double ag = Math.toDegrees(Math.atan2(Math.abs(y), x));
-                        if (y > 0) {
-                            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle - ag, centerLng, centerLat, dis);
-                        } else {
-                            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + ag, centerLng, centerLat, dis);
-                        }
-                    }
-                    cMap.put(CommonConstant.LONGITUDE, lngLatMap.get(CommonConstant.LONGITUDE));
-                    cMap.put(CommonConstant.LATITUDE, lngLatMap.get(CommonConstant.LATITUDE));
+                    lngLatMapCount(x, y, centerLng, centerLat, angle, cMap);
                     cMapList.add(cMap);
                 }
             }
         }
         return cMapList;
+    }
+
+    /**
+     * 计算高斯烟羽模型-不考虑大气稳定度等系数条件
+     *
+     * @param centerLng 起始经度
+     * @param centerLat 起始纬度
+     * @param ws        平均风速 m/s
+     * @param q         源强
+     * @param t         泄露时间
+     * @param h         高度
+     * @param angle     风向角度
+     * @return
+     */
+    public List<Map<String, Double>> gaussianPlume(double centerLng, double centerLat, double ws, double q, int t, double h, double angle) {
+        return gaussianPlume(centerLng, centerLat, ws, q, t, 1, h, angle, 1);
+    }
+
+    /**
+     * 计算高斯烟羽模型-不考虑大气稳定度等系数条件
+     *
+     * @param centerLng 起始经度
+     * @param centerLat 起始纬度
+     * @param ws        风速
+     * @param q         原强
+     * @param t         经过时间
+     * @param speed     速度
+     * @param h         源高
+     * @param angle     角度
+     * @param step      步长
+     * @return
+     */
+    public List<Map<String, Double>> gaussianPlume(double centerLng, double centerLat, double ws, double q, int t, int speed, double h, double angle, double step) {
+        // 平移距离x
+        double totalX = ws * t * speed;
+        // 平移距离/步长向上取整
+        List<Double> xRange = CollUtil.toList(totalX);
+        List<Double> yRange = CollUtil.toList(totalX, -totalX);
+        List<Double> zRange = CollUtil.toList(h);
+        int section = Convert.toInt(Math.ceil(totalX / step));
+        for (int index = 0; index < section; index++) {
+            if (index != 0) {
+                CommonUtil.notContainAdd(xRange, index * step);
+            }
+            CommonUtil.notContainAdd(yRange, index * step);
+            CommonUtil.notContainAdd(yRange, -index * step);
+            CommonUtil.notContainAdd(zRange, h + index * step);
+            if (h - index * step <= 0) {
+                CommonUtil.notContainAdd(zRange, 0D);
+            } else {
+                CommonUtil.notContainAdd(zRange, h - index * step);
+            }
+        }
+        List<Map<String, Double>> cMapList = new ArrayList<>();
+        for (int i = 0; i < xRange.size(); i++) {
+            for (int j = 0; j < yRange.size(); j++) {
+                for (int k = 0; k < zRange.size(); k++) {
+                    Map<String, Double> cMap = new HashMap<>(5);
+                    double x = xRange.get(i);
+                    double y = yRange.get(j);
+                    double z = zRange.get(k);
+                    cMap.put(CommonConstant.HEIGHT, z);
+                    double c;
+                    c = NumberUtil.round(powerContinuousDiffusionWithoutSigma(q, ws, h, x, y, z), 3).doubleValue();
+                    if (c == 0) {
+                        continue;
+                    }
+                    cMap.put(CommonConstant.POLLUTANT_CONCENTRATION, c);
+                    lngLatMapCount(x, y, centerLng, centerLat, angle, cMap);
+                    cMapList.add(cMap);
+                }
+            }
+        }
+        return cMapList;
+    }
+
+    /**
+     * 计算经纬独所在的点信息
+     *
+     * @param x         x轴平移距离
+     * @param y         y轴平移距离
+     * @param centerLng 起始经度
+     * @param centerLat 起始纬度
+     * @param angle     风向角
+     * @param cMap      储存信息map
+     */
+    private void lngLatMapCount(double x, double y, double centerLng, double centerLat, double angle, Map<String, Double> cMap) {
+        Map<String, Double> lngLatMap = new HashMap<>(4);
+        // 计算经纬度
+        if (x == 0 && y == 0) {
+            lngLatMap.put(CommonConstant.LONGITUDE, centerLng);
+            lngLatMap.put(CommonConstant.LATITUDE, centerLat);
+        } else if (x == 0) {
+            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(90 - angle, centerLng, centerLat, y);
+        } else if (y == 0) {
+            lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle, centerLng, centerLat, x);
+        } else {
+            double dis = Math.sqrt(x * x + y * y);
+            double ag = Math.toDegrees(Math.atan2(Math.abs(y), x));
+            if (y > 0) {
+                lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle - ag, centerLng, centerLat, dis);
+            } else {
+                lngLatMap = LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + ag, centerLng, centerLat, dis);
+            }
+        }
+        cMap.put(CommonConstant.LONGITUDE, lngLatMap.get(CommonConstant.LONGITUDE));
+        cMap.put(CommonConstant.LATITUDE, lngLatMap.get(CommonConstant.LATITUDE));
     }
 }
