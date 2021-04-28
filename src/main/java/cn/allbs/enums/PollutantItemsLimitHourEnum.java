@@ -23,13 +23,13 @@ public enum PollutantItemsLimitHourEnum {
     /**
      * 污染物一小时浓度限值
      */
-    SO2("SO2", "二氧化硫", "μg/m³", CollUtil.list(true, 0, 150, 500, 650, 800)),
+    SO2(PollutionGas.a21026.toString(), PollutionGas.a21026.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 150, 500, 650, 800)),
 
-    NO2("NO2", "二氧化氮", "μg/m³", CollUtil.list(true, 0, 100, 200, 700, 1200, 2340, 3090, 3840)),
+    NO2(PollutionGas.a21004.toString(), PollutionGas.a21004.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 100, 200, 700, 1200, 2340, 3090, 3840)),
 
-    CO("CO", "一氧化碳", "mg/m³", CollUtil.list(true, 0, 5, 10, 35, 60, 90, 120, 150)),
+    CO(PollutionGas.a21005.toString(), PollutionGas.a21005.getMeaning(), "mg/m³", 1D, CollUtil.list(true, 0, 5, 10, 35, 60, 90, 120, 150)),
 
-    O3("O3", "臭氧", "μg/m³", CollUtil.list(true, 0, 160, 200, 300, 400, 800, 1000, 1200));
+    O3("O3", "臭氧", "μg/m³", 1000D, CollUtil.list(true, 0, 160, 200, 300, 400, 800, 1000, 1200));
 
     /**
      * 污染物编码
@@ -42,9 +42,14 @@ public enum PollutantItemsLimitHourEnum {
     private final String name;
 
     /**
-     * 污染物单位
+     * 污染物单位 计算时单位
      */
     private final String unit;
+
+    /**
+     * 转化比率
+     */
+    private final Double rate;
 
     /**
      * 取值区间
@@ -74,6 +79,7 @@ public enum PollutantItemsLimitHourEnum {
             return PollutantItemsLimitDayEnum.AirAqiCountDayAverage(SO2.getCode(), cp);
         }
         List<Integer> sectionList = HOUR_ENUM_MAP.get(code).getSectionList();
+        cp = cp * HOUR_ENUM_MAP.get(code).getRate();
         for (int i = 0; i < sectionList.size(); i++) {
             // 判断在哪个区间中
             if (cp <= sectionList.get(i)) {

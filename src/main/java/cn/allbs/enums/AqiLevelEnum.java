@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ * aqi 划分
+ *
  * @author ChenQi
  */
 @Getter
