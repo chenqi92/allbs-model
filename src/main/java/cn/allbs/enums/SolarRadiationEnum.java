@@ -11,7 +11,6 @@ import java.util.Map;
  * 太阳辐射等级
  *
  * @author ChenQi
- * @date 2021/4/21
  */
 @Getter
 @AllArgsConstructor

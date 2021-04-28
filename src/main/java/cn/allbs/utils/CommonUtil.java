@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * @author ChenQi
- * @date 2021/4/26
  */
 @UtilityClass
 public class CommonUtil {

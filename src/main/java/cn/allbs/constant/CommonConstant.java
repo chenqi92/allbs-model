@@ -2,7 +2,6 @@ package cn.allbs.constant;
 
 /**
  * @author ChenQi
- * @date 2021/4/26
  */
 public interface CommonConstant {
 

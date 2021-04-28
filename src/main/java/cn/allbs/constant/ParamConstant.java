@@ -8,7 +8,6 @@ import java.util.List;
  * 常量
  *
  * @author ChenQi
- * @date 2021/4/21
  */
 public interface ParamConstant {
 

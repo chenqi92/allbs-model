@@ -15,7 +15,6 @@ import java.util.Map;
  * 空气质量分指数对应的污染物浓度限值 1小时平均值 即实时值
  *
  * @author ChenQi
- * @date 2021/4/27
  */
 @Getter
 @AllArgsConstructor

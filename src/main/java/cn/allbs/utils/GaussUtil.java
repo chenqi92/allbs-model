@@ -17,7 +17,6 @@ import java.util.Map;
  * 高斯模型，高斯烟羽 + 高斯烟团
  *
  * @author ChenQi
- * @date 2021/4/21
  */
 @UtilityClass
 public class GaussUtil {
@@ -556,7 +555,7 @@ public class GaussUtil {
      * @param t         泄露时间
      * @param h         高度
      * @param angle     风向角度
-     * @return
+     * @return 不考虑大气稳定度等系数条件空间点污染物浓度
      */
     public List<Map<String, Double>> gaussianPlume(double centerLng, double centerLat, double ws, double q, int t, double h, double angle) {
         return gaussianPlume(centerLng, centerLat, ws, q, t, 1, h, angle, 1);
@@ -574,7 +573,7 @@ public class GaussUtil {
      * @param h         源高
      * @param angle     角度
      * @param step      步长
-     * @return
+     * @return 不考虑大气稳定度等系数条件污染物浓度
      */
     public List<Map<String, Double>> gaussianPlume(double centerLng, double centerLat, double ws, double q, int t, int speed, double h, double angle, double step) {
         // 平移距离x

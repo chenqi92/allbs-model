@@ -7,7 +7,6 @@ import lombok.Getter;
  * 大气稳定度
  *
  * @author ChenQi
- * @date 2021/4/21
  */
 @Getter
 @AllArgsConstructor

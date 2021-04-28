@@ -6,7 +6,6 @@ import lombok.Data;
  * 数值区间
  *
  * @author ChenQi
- * @date 2021/4/27
  */
 @Data
 public class SectionBo {

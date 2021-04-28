@@ -16,7 +16,6 @@ import java.util.Map;
  * 大气Aqi计算
  *
  * @author ChenQi
- * @date 2021/4/25
  */
 @UtilityClass
 public class AqiUtil {
