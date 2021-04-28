@@ -25,4 +25,18 @@ public interface CommonConstant {
      * 污染物浓度
      */
     String POLLUTANT_CONCENTRATION = "c";
+    /**
+     * 首要污染物
+     */
+    String PRIMARY_POLLUTANT = "primaryP";
+
+    /**
+     * 超标污染物
+     */
+    String EXCESSIVE_POLLUTANT = "excessiveP";
+
+    /**
+     * AQI
+     */
+    String AQI = "aqi";
 }
