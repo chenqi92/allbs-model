@@ -50,4 +50,6 @@ public interface ParamConstant {
      * 超标污染物最小标准(IAQI 大于此数的即为超标污染物)
      */
     Integer EXCESSIVE_POLLUTANT_MIN_LIMIT = 100;
+
+    char[] PIXEL = {'@', '#', '8', '&', 'o', ':', '*', '.', ' '};
 }

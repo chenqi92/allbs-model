@@ -8,7 +8,7 @@
     <artifactId>allbs-model</artifactId>
     <name>allbs-model</name>
     <packaging>jar</packaging>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
     <description>智慧环保可能会用到的模型计算</description>
     <url>www.allbs.cn</url>
 
@@ -40,7 +40,7 @@
         </license>
     </licenses>
     <scm>
-        <tag>V0.0.2</tag>
+        <tag>V0.0.4</tag>
         <url>git@github.com:chenqi92/allbs-model.git</url>
         <connection>scm:git:git@github.com:chenqi92/allbs-model.git</connection>
         <developerConnection>scm:git:git@github.com:chenqi92/allbs-model.git</developerConnection>
@@ -60,10 +60,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.1.0</version>
-<!--                <configuration>-->
-                <!--                    <failOnError>false</failOnError>-->
-                <!--                    <doclint>none</doclint>-->
-                <!--                </configuration>-->
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
