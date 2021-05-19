@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 高斯模型，高斯烟羽 + 高斯烟团
+ * 高斯模型
+ * <p>
+ * 高斯烟羽 + 高斯烟团
  *
  * @author ChenQi
  */
