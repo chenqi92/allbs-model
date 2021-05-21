@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,15 +15,20 @@ import java.util.List;
 @UtilityClass
 public class ClassUtil {
 
-    public Field[] getClassField(Class<?> clazz) {
+    /**
+     * 类域获取
+     * <p>
+     * 获取当前类包括父类的所有域
+     *
+     * @param clazz 需要遍历的类
+     * @return 所有域
+     */
+    public Field[] getClassFields(Class<?> clazz) {
         List<Field> list = new ArrayList<>();
-        Field[] fields;
-        do {
-            fields = clazz.getDeclaredFields();
-            for (int i = 0; i < fields.length; i++) {
-                list.add(fields[i]);
-            }
-        } while (clazz != Object.class && clazz != null);
-        return list.toArray(fields);
+        while (clazz != null) {
+            list.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return list.toArray(new Field[0]);
     }
 }

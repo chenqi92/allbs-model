@@ -3,6 +3,9 @@ package cn.allbs.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 国标hj212-2017
  *
@@ -85,4 +88,18 @@ public enum PollutionWater {
     private final String chromaUnit;
     private final String amountUnit;
     private final String type;
+
+    public static final Map<String, PollutionWater> WATER_MAP = new HashMap<>(85);
+
+    public static final Map<String, String> OLD_CAST_MAP = new HashMap<>(85);
+
+    static {
+        PollutionWater[] pollutionWaters = PollutionWater.values();
+        for (PollutionWater water : pollutionWaters) {
+            WATER_MAP.put(water.toString(), water);
+            if (!"--".equals(water.getOldCode())) {
+                OLD_CAST_MAP.put(water.oldCode, water.toString());
+            }
+        }
+    }
 }

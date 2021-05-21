@@ -20,6 +20,7 @@ public class SectionBo {
      */
     private Double max;
 
+
     public SectionBo(Double min, Double max) {
         this.min = min;
         this.max = max;

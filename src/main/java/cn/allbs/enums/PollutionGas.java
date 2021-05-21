@@ -3,6 +3,9 @@ package cn.allbs.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 国标212-2017 气体编码定义
  *
@@ -142,4 +145,18 @@ public enum PollutionGas {
     private final String chromaUnit;
     private final String amountUnit;
     private final String type;
+
+    public static final Map<String, PollutionGas> GAS_MAP = new HashMap<>(161);
+
+    public static final Map<String, String> OLD_CAST_MAP = new HashMap<>(161);
+
+    static {
+        PollutionGas[] pollutionGases = PollutionGas.values();
+        for (PollutionGas gas : pollutionGases) {
+            GAS_MAP.put(gas.toString(), gas);
+            if (!"--".equals(gas.getOldCode())) {
+                OLD_CAST_MAP.put(gas.oldCode, gas.toString());
+            }
+        }
+    }
 }
