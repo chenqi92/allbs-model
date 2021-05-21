@@ -1,7 +1,7 @@
 package cn.allbs.utils;
 
 import cn.allbs.enums.MathExtentEnum;
-import cn.allbs.model.SectionBo;
+import lombok.experimental.UtilityClass;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -13,6 +13,7 @@ import javax.script.ScriptEngineManager;
  *
  * @author ChenQi
  */
+@UtilityClass
 public class IntervalUtil {
 
     /**
@@ -140,7 +141,7 @@ public class IntervalUtil {
         if (checkNum == null) {
             return true;
         }
-        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllClose(new SectionBo(min, max)));
+        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllClose(min, max));
     }
 
     /**
@@ -157,7 +158,7 @@ public class IntervalUtil {
         if (checkNum == null) {
             return true;
         }
-        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllClose(new SectionBo(min, max)));
+        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllOpen(min, max));
     }
 
     /**
@@ -174,7 +175,7 @@ public class IntervalUtil {
         if (checkNum == null) {
             return true;
         }
-        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllClose(new SectionBo(min, max)));
+        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressRightOpenOnly(min, max));
     }
 
     /**
@@ -191,6 +192,6 @@ public class IntervalUtil {
         if (checkNum == null) {
             return true;
         }
-        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressAllClose(new SectionBo(min, max)));
+        return IntervalUtil.isInTheInterval(checkNum.toString(), MathExtentEnum.getEqExpressLeftOpenOnly(min, max));
     }
 }

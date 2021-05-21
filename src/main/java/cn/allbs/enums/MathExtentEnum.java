@@ -1,6 +1,5 @@
 package cn.allbs.enums;
 
-import cn.allbs.model.SectionBo;
 import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -74,18 +73,19 @@ public enum MathExtentEnum {
      * <p>
      * 获取区间计算表达式
      *
-     * @param sectionBo 最大最小值
+     * @param min 最小值
+     * @param max 最大值
      * @return 区间计算表达式
      */
-    public static String getEqExpressAllClose(SectionBo sectionBo) {
-        if (sectionBo.getMin() != null && sectionBo.getMax() != null) {
-            return StrUtil.format(IN_SECTION_LEFT_RIGHT.getExpression(), sectionBo.getMin(), sectionBo.getMax());
+    public static String getEqExpressAllClose(Double min, Double max) {
+        if (min != null && max != null) {
+            return StrUtil.format(IN_SECTION_LEFT_RIGHT.getExpression(), min, max);
         }
-        if (sectionBo.getMin() != null) {
-            return StrUtil.format(LEFT_CLOSED.getExpression(), sectionBo.getMin());
+        if (min != null) {
+            return StrUtil.format(LEFT_CLOSED.getExpression(), min);
         }
-        if (sectionBo.getMax() != null) {
-            return StrUtil.format(RIGHT_CLOSED.getExpression(), sectionBo.getMax());
+        if (max != null) {
+            return StrUtil.format(RIGHT_CLOSED.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -95,18 +95,19 @@ public enum MathExtentEnum {
      * <p>
      * 获取区间计算表达式
      *
-     * @param sectionBo 最大最小值
+     * @param min 最小值
+     * @param max 最大值
      * @return 区间表达式
      */
-    public static String getEqExpressAllOpen(SectionBo sectionBo) {
-        if (sectionBo.getMin() != null && sectionBo.getMax() != null) {
-            return StrUtil.format(IN_SECTION.getExpression(), sectionBo.getMin(), sectionBo.getMax());
+    public static String getEqExpressAllOpen(Double min, Double max) {
+        if (min != null && max != null) {
+            return StrUtil.format(IN_SECTION.getExpression(), min, max);
         }
-        if (sectionBo.getMin() != null) {
-            return StrUtil.format(LEFT_OPEN.getExpression(), sectionBo.getMin());
+        if (min != null) {
+            return StrUtil.format(LEFT_OPEN.getExpression(), min);
         }
-        if (sectionBo.getMax() != null) {
-            return StrUtil.format(RIGHT_OPEN.getExpression(), sectionBo.getMax());
+        if (max != null) {
+            return StrUtil.format(RIGHT_OPEN.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -116,18 +117,19 @@ public enum MathExtentEnum {
      * <p>
      * 获取区间计算表达式
      *
-     * @param sectionBo 最大最小值
+     * @param min 最小值
+     * @param max 最大值
      * @return 区间表达式
      */
-    public static String getEqExpressLeftOpenOnly(SectionBo sectionBo) {
-        if (sectionBo.getMin() != null && sectionBo.getMax() != null) {
-            return StrUtil.format(IN_SECTION_RIGHT_ONLY.getExpression(), sectionBo.getMin(), sectionBo.getMax());
+    public static String getEqExpressLeftOpenOnly(Double min, Double max) {
+        if (min != null && max != null) {
+            return StrUtil.format(IN_SECTION_RIGHT_ONLY.getExpression(), min, max);
         }
-        if (sectionBo.getMin() != null) {
-            return StrUtil.format(LEFT_OPEN.getExpression(), sectionBo.getMin());
+        if (min != null) {
+            return StrUtil.format(LEFT_OPEN.getExpression(), min);
         }
-        if (sectionBo.getMax() != null) {
-            return StrUtil.format(RIGHT_CLOSED.getExpression(), sectionBo.getMax());
+        if (max != null) {
+            return StrUtil.format(RIGHT_CLOSED.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -137,18 +139,19 @@ public enum MathExtentEnum {
      * <p>
      * 获取区间计算表达式
      *
-     * @param sectionBo 最大最小值
+     * @param min 最小值
+     * @param max 最大值
      * @return 区间表达式
      */
-    public static String getEqExpressRightOpenOnly(SectionBo sectionBo) {
-        if (sectionBo.getMin() != null && sectionBo.getMax() != null) {
-            return StrUtil.format(IN_SECTION_LEFT_ONLY.getExpression(), sectionBo.getMin(), sectionBo.getMax());
+    public static String getEqExpressRightOpenOnly(Double min, Double max) {
+        if (min != null && max != null) {
+            return StrUtil.format(IN_SECTION_LEFT_ONLY.getExpression(), min, max);
         }
-        if (sectionBo.getMin() != null) {
-            return StrUtil.format(LEFT_CLOSED.getExpression(), sectionBo.getMin());
+        if (min != null) {
+            return StrUtil.format(LEFT_CLOSED.getExpression(), min);
         }
-        if (sectionBo.getMax() != null) {
-            return StrUtil.format(RIGHT_OPEN.getExpression(), sectionBo.getMax());
+        if (max != null) {
+            return StrUtil.format(RIGHT_OPEN.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
