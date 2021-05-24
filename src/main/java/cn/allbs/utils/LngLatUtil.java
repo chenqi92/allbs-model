@@ -1,6 +1,7 @@
 package cn.allbs.utils;
 
 import cn.allbs.constant.CommonConstant;
+import cn.allbs.enums.CoordinateSystemEnum;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.json.JSONArray;
 import lombok.experimental.UtilityClass;
@@ -30,7 +31,7 @@ public class LngLatUtil {
     /**
      * WGS84 扁率
      */
-    private static final double WGS84_OBLATENESS = 298.257223563D;
+    private static final double WGS84_OBLIQUENESS = 298.257223563D;
 
     /**
      * 计算经纬度(带扁率校准)
@@ -42,7 +43,7 @@ public class LngLatUtil {
      * @return 距离 米
      */
     public double getDistanceOfMeter(double startLng, double startLat, double endLng, double endLat) {
-        double f = 1.0D / WGS84_OBLATENESS;
+        double f = 1.0D / WGS84_OBLIQUENESS;
         double b = (1.0D - f) * WGS84_EARTH_RADIUS;
         double a2b2b2 = (Math.pow(WGS84_EARTH_RADIUS, 2) - Math.pow(b, 2)) / Math.pow(b, 2);
         double omega = Math.toRadians(endLng) - Math.toRadians(startLng);
@@ -89,7 +90,7 @@ public class LngLatUtil {
     }
 
     /**
-     * 计算经纬度（不带扁率校准）
+     * 计算经纬度（不带扁率校准, 默认为WGS84坐标）
      *
      * @param startLng 起始经度
      * @param startLat 起始纬度
@@ -107,6 +108,32 @@ public class LngLatUtil {
         s = s * WGS84_EARTH_RADIUS;
         s = Math.round(s * 10000d) / 10000d;
         return s;
+    }
+
+    /**
+     * 计算经纬度 带入坐标系进行判断后计算
+     *
+     * @param startLng             起始经度
+     * @param startLat             起始纬度
+     * @param endLng               结束经度
+     * @param endLat               结束纬度
+     * @param coordinateSystemEnum 坐标系枚举
+     * @return 相差距离
+     */
+    public double getDistance(double startLng, double startLat, double endLng, double endLat, CoordinateSystemEnum coordinateSystemEnum) {
+        // 火星坐标系转化
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
+            double[] start = GPSConverterUtils.gcj02towgs84(startLng, startLat);
+            double[] end = GPSConverterUtils.gcj02towgs84(endLng, endLat);
+            return getDistance(start[0], start[1], end[0], end[1]);
+        }
+        // 百度坐标系转换
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
+            double[] start = GPSConverterUtils.bd09towgs84(startLng, startLat);
+            double[] end = GPSConverterUtils.bd09towgs84(endLng, endLat);
+            return getDistance(start[0], start[1], end[0], end[1]);
+        }
+        return getDistance(startLng, startLat, endLng, endLat);
     }
 
     /**
@@ -137,6 +164,31 @@ public class LngLatUtil {
     }
 
     /**
+     * 带入坐标系计算距离角度外的一点
+     * <p>
+     * 根据一点的坐标与距离，以及方向，计算另外一点的位置（不带入扁率）正北0度即为纬度轴,横向为经度轴
+     *
+     * @param angle    角度，从正北顺时针方向开始计算
+     * @param startLng 起始点经度
+     * @param startLat 起始点纬度
+     * @param distance 距离，单位m
+     * @return 经纬度map
+     */
+    public Map<String, Double> calLocationByDistanceAndLocationAndDirection(double angle, double startLng, double startLat, double distance, CoordinateSystemEnum coordinateSystemEnum) {
+        // 火星坐标系转化
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
+            double[] trans = GPSConverterUtils.gcj02towgs84(startLng, startLat);
+            return calLocationByDistanceAndLocationAndDirection(angle, trans[0], trans[1], distance);
+        }
+        // 百度坐标系转换
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
+            double[] trans = GPSConverterUtils.bd09towgs84(startLng, startLat);
+            return calLocationByDistanceAndLocationAndDirection(angle, trans[0], trans[1], distance);
+        }
+        return calLocationByDistanceAndLocationAndDirection(angle, startLng, startLat, distance);
+    }
+
+    /**
      * 判断一个点是否在圆形区域内
      *
      * @param radius 半径
@@ -146,7 +198,20 @@ public class LngLatUtil {
      * @param lng2   坐标经度
      */
     public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, String radius) {
-        return getDistance(lat1, lng1, lat2, lng2) > Double.parseDouble(radius);
+        return getDistance(lng1, lat1, lng2, lat2) > Double.parseDouble(radius);
+    }
+
+    /**
+     * 判断一个点是否在圆形区域内 带入坐标系
+     *
+     * @param radius 半径
+     * @param lat1   圆心纬度
+     * @param lng1   圆心经度
+     * @param lat2   坐标纬度
+     * @param lng2   坐标经度
+     */
+    public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, String radius, CoordinateSystemEnum coordinateSystemEnum) {
+        return getDistance(lng1, lat1, lng2, lat2, coordinateSystemEnum) > Double.parseDouble(radius);
     }
 
     /**
@@ -174,6 +239,55 @@ public class LngLatUtil {
     }
 
     /**
+     * 判断是否在多边形区域内
+     *
+     * @param pointLon             要判断的点的纵坐标
+     * @param pointLat             要判断的点的横坐标
+     * @param points               经纬度json数组 "[{\"x\":120.61123416,\"y\":31.32889074,\"z\":137.05},{\"x\":120.61312695,\"y\":31.31892631,\"z\":128.61},{\"x\":120.61455616,\"y\":31.30808702,\"z\":43.66},{\"x\":120.62127327,\"y\":31.30899876,\"z\":62.21},{\"x\":120.63003506,\"y\":31.31057071,\"z\":29.43},{\"x\":120.63726235,\"y\":31.31203339,\"z\":92.90},{\"x\":120.64536616,\"y\":31.31334188,\"z\":78.36},{\"x\":120.64402082,\"y\":31.31947999,\"z\":13.19},{\"x\":120.64136126,\"y\":31.32757908,\"z\":87.36},{\"x\":120.63689776,\"y\":31.33287239,\"z\":60.62},{\"x\":120.63502091,\"y\":31.33742080,\"z\":114.21},{\"x\":120.63071787,\"y\":31.33793104,\"z\":32.99},{\"x\":120.62952446,\"y\":31.34483170,\"z\":164.79},{\"x\":120.62710968,\"y\":31.34801804,\"z\":164.15},{\"x\":120.62731359,\"y\":31.34823458,\"z\":189.53},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62665860,\"y\":31.34861797,\"z\":155.41},{\"x\":120.61706620,\"y\":31.34846463,\"z\":200.05},{\"x\":120.61854348,\"y\":31.34267516,\"z\":138.68},{\"x\":120.62111689,\"y\":31.33313042,\"z\":154.61}]"
+     * @param coordinateSystemEnum 坐标系
+     * @return true 在范围内 false 不在范围内
+     */
+    public static boolean isInPolygon(double pointLon, double pointLat, JSONArray points, CoordinateSystemEnum coordinateSystemEnum) {
+        // 火星坐标系转化
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
+            double[] trans = GPSConverterUtils.gcj02towgs84(pointLon, pointLat);
+            pointLon = trans[0];
+            pointLat = trans[1];
+        }
+        // 百度坐标系转换
+        if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
+            double[] trans = GPSConverterUtils.bd09towgs84(pointLon, pointLat);
+            pointLon = trans[0];
+            pointLat = trans[1];
+        }
+        // 将要判断的横纵坐标组成一个点
+        Point2D.Double point = new Point.Double(pointLon, pointLat);
+        // 将区域各顶点的横纵坐标放到一个点集合里面
+        List<Point2D.Double> pointList = new ArrayList<>();
+        double polygonPointX, polygonPointY;
+        int len = points.size();
+        for (int i = 0; i < len; i++) {
+            polygonPointX = points.getJSONObject(i).getDouble("x");
+            polygonPointY = points.getJSONObject(i).getDouble("y");
+            // 火星坐标系转化
+            if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
+                double[] trans = GPSConverterUtils.gcj02towgs84(polygonPointX, polygonPointY);
+                polygonPointX = trans[0];
+                polygonPointY = trans[1];
+            }
+            // 百度坐标系转换
+            if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
+                double[] trans = GPSConverterUtils.bd09towgs84(polygonPointX, polygonPointY);
+                polygonPointX = trans[0];
+                polygonPointY = trans[1];
+            }
+            Point2D.Double polygonPoint = new Point2D.Double(polygonPointX, polygonPointY);
+            pointList.add(polygonPoint);
+        }
+        return check(point, pointList);
+    }
+
+    /**
      * 一个点是否在多边形内
      *
      * @param point   要判断的点的横纵坐标
@@ -182,7 +296,6 @@ public class LngLatUtil {
      */
     private static boolean check(Point2D.Double point, List<Point2D.Double> polygon) {
         GeneralPath penalPath = new GeneralPath();
-
         Point2D.Double first = polygon.get(0);
         // 通过移动到指定坐标（以双精度指定），将一个点添加到路径中
         penalPath.moveTo(first.x, first.y);

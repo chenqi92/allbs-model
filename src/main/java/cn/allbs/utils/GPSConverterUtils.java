@@ -3,7 +3,7 @@ package cn.allbs.utils;
 import lombok.experimental.UtilityClass;
 
 /**
- * 百度坐标（BD09）、国测局坐标（火星坐标，GCJ02）、和WGS84坐标系之间的转换的工具
+     * 百度坐标（BD09）、国测局坐标（火星坐标，GCJ02）、和WGS84坐标系之间的转换的工具
  * <p>
  * WGS84: Google Earth采用，Google Map中国范围外使用
  * GCJ02: 火星坐标系，中国国家测绘局制定的坐标系统，由WGS84机密后的坐标。Google Map中国和搜搜地图使用，高德
@@ -175,9 +175,8 @@ public class GPSConverterUtils {
     public static boolean out_of_china(double lng, double lat) {
         if (lng < 72.004 || lng > 137.8347) {
             return true;
-        } else if (lat < 0.8293 || lat > 55.8271) {
-            return true;
+        } else {
+            return lat < 0.8293 || lat > 55.8271;
         }
-        return false;
     }
 }
