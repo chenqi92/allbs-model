@@ -54,7 +54,7 @@ public class GPSConverterUtils {
     /**
      * 火星坐标系(GCJ-02)转百度坐标系(BD-09)
      * <p>
-     * 谷歌、高德——>百度
+     * 谷歌、高德——&lt;百度
      *
      * @param lng 火星坐标经度
      * @param lat 火星坐标纬度
@@ -71,7 +71,7 @@ public class GPSConverterUtils {
     /**
      * 百度坐标系(BD-09)转火星坐标系(GCJ-02)
      * <p>
-     * 百度——>谷歌、高德
+     * 百度——&lt;谷歌、高德
      *
      * @param bd_lon 百度坐标纬度
      * @param bd_lat 百度坐标经度
