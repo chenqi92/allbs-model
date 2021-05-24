@@ -31,8 +31,8 @@ public class GaussUtil {
      * @return 水平扩散参数 m
      */
     private double getSigmaY(double x, String q) {
-        double a = 0.0;
-        double r = 0.0;
+        double a;
+        double r;
         if (SolarRadiationEnum.A.getLevel().equals(q)) {
             if (x <= ParamConstant.THOUSAND) {
                 a = 0.901074;
@@ -117,8 +117,8 @@ public class GaussUtil {
      * @return 垂直扩散参数 m
      */
     private double getSigmaZ(double x, String q) {
-        double a = 0.0;
-        double r = 0.0;
+        double a;
+        double r;
         if (SolarRadiationEnum.A.getLevel().equals(q)) {
             if (x <= ParamConstant.THREE_HUNDRED) {
                 a = 1.12154;
@@ -366,13 +366,13 @@ public class GaussUtil {
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
-        for (int i = 0; i < xRange.size(); i++) {
-            for (int j = 0; j < yRange.size(); j++) {
-                for (int k = 0; k < zRange.size(); k++) {
+        for (Double aDouble : xRange) {
+            for (Double value : yRange) {
+                for (Double item : zRange) {
                     Map<String, Double> cMap = new HashMap<>(5);
-                    double x = xRange.get(i);
-                    double y = yRange.get(j);
-                    double z = zRange.get(k);
+                    double x = aDouble;
+                    double y = value;
+                    double z = item;
                     cMap.put(CommonConstant.HEIGHT, z);
                     double c;
                     c = NumberUtil.round(smokeConcentration(q, ws, t, x, y, z), 3).doubleValue();
@@ -452,13 +452,13 @@ public class GaussUtil {
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
-        for (int i = 0; i < xRange.size(); i++) {
-            for (int j = 0; j < yRange.size(); j++) {
-                for (int k = 0; k < zRange.size(); k++) {
+        for (Double aDouble : xRange) {
+            for (Double value : yRange) {
+                for (Double item : zRange) {
                     Map<String, Double> cMap = new HashMap<>(5);
-                    double x = xRange.get(i);
-                    double y = yRange.get(j);
-                    double z = zRange.get(k);
+                    double x = aDouble;
+                    double y = value;
+                    double z = item;
                     cMap.put(CommonConstant.HEIGHT, z);
                     double c;
                     if (z == 0) {
@@ -518,21 +518,19 @@ public class GaussUtil {
         List<Double> zRange = CollUtil.toList(0D, totalX);
         int section = Convert.toInt(Math.ceil(totalX / step));
         for (int index = 1; index < section; index++) {
-            if (index != 0) {
-                CommonUtil.notContainAdd(xRange, index * step);
-            }
+            CommonUtil.notContainAdd(xRange, index * step);
             CommonUtil.notContainAdd(yRange, index * step);
             CommonUtil.notContainAdd(yRange, -index * step);
             CommonUtil.notContainAdd(zRange, index * step);
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
-        for (int i = 0; i < xRange.size(); i++) {
-            for (int j = 0; j < yRange.size(); j++) {
-                for (int k = 0; k < zRange.size(); k++) {
+        for (Double aDouble : xRange) {
+            for (Double value : yRange) {
+                for (Double item : zRange) {
                     Map<String, Double> cMap = new HashMap<>(5);
-                    double x = xRange.get(i);
-                    double y = yRange.get(j);
-                    double z = zRange.get(k);
+                    double x = aDouble;
+                    double y = value;
+                    double z = item;
                     cMap.put(CommonConstant.HEIGHT, z);
                     double c = NumberUtil.round(groundPointSource(q, ws, x, Math.abs(y), z, l), 3).doubleValue();
                     if (c == 0) {
@@ -599,13 +597,13 @@ public class GaussUtil {
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
-        for (int i = 0; i < xRange.size(); i++) {
-            for (int j = 0; j < yRange.size(); j++) {
-                for (int k = 0; k < zRange.size(); k++) {
+        for (Double aDouble : xRange) {
+            for (Double value : yRange) {
+                for (Double item : zRange) {
                     Map<String, Double> cMap = new HashMap<>(5);
-                    double x = xRange.get(i);
-                    double y = yRange.get(j);
-                    double z = zRange.get(k);
+                    double x = aDouble;
+                    double y = value;
+                    double z = item;
                     cMap.put(CommonConstant.HEIGHT, z);
                     double c;
                     c = NumberUtil.round(powerContinuousDiffusionWithoutSigma(q, ws, h, x, y, z), 3).doubleValue();

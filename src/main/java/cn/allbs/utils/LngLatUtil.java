@@ -196,22 +196,27 @@ public class LngLatUtil {
      * @param lng1   圆心经度
      * @param lat2   坐标纬度
      * @param lng2   坐标经度
+     * @param radius 需要计算的半径
+     * @return true 在范围内 false 不在范围内
      */
-    public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, String radius) {
-        return getDistance(lng1, lat1, lng2, lat2) > Double.parseDouble(radius);
+    public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, double radius) {
+        return getDistance(lng1, lat1, lng2, lat2) <= radius;
     }
 
     /**
      * 判断一个点是否在圆形区域内 带入坐标系
      *
-     * @param radius 半径
-     * @param lat1   圆心纬度
-     * @param lng1   圆心经度
-     * @param lat2   坐标纬度
-     * @param lng2   坐标经度
+     * @param radius               半径
+     * @param lat1                 圆心纬度
+     * @param lng1                 圆心经度
+     * @param lat2                 坐标纬度
+     * @param lng2                 坐标经度
+     * @param radius               需要计算的半径
+     * @param coordinateSystemEnum 坐标系
+     * @return true 在范围内 false 不在范围内
      */
-    public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, String radius, CoordinateSystemEnum coordinateSystemEnum) {
-        return getDistance(lng1, lat1, lng2, lat2, coordinateSystemEnum) > Double.parseDouble(radius);
+    public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, double radius, CoordinateSystemEnum coordinateSystemEnum) {
+        return getDistance(lng1, lat1, lng2, lat2, coordinateSystemEnum) <= radius;
     }
 
     /**
@@ -309,5 +314,49 @@ public class LngLatUtil {
         penalPath.closePath();
         // 测试指定的 Point2D 是否在 Shape 的边界内。
         return penalPath.contains(point);
+    }
+
+    /**
+     * 计算是否在扇形区域内
+     *
+     * @param startLng 起始经度
+     * @param startLat 其实纬度
+     * @param angel    需要计算的角度
+     * @param diffuse  计算角度向两边扩散度数
+     * @param checkLng 需要校验的经度
+     * @param checkLat 需要校验的纬度
+     * @return true 在扇形范围内 false 不在扇形范围内
+     */
+    public static boolean isInSector(double startLng, double startLat, double angel, double diffuse, double checkLng, double checkLat) {
+        // 计算角度范围
+        double minAngel = angel - diffuse;
+        double maxAngel = angel + diffuse;
+        // 计算斜边
+        double st = Math.atan2(checkLat - startLat, checkLng - startLng);
+        if (IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st - 2 * Math.PI)
+                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st)
+                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st + 2 * Math.PI)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 计算是否在扇形区域内
+     *
+     * @param startLng 起始经度
+     * @param startLat 其实纬度
+     * @param angel    需要计算的角度
+     * @param diffuse  计算角度向两边扩散度数
+     * @param checkLng 需要校验的经度
+     * @param checkLat 需要校验的纬度
+     * @param distance 计算距离
+     * @return true 在扇形范围内 false 不在扇形范围内
+     */
+    public static boolean isInSector(double startLng, double startLat, double angel, double diffuse, double checkLng, double checkLat, Double distance) {
+        if (!isInCircle(startLng, startLat, checkLng, checkLat, distance)) {
+            return false;
+        }
+        return isInSector(startLng, startLat, angel, diffuse, checkLng, checkLat);
     }
 }
