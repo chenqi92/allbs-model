@@ -1,5 +1,7 @@
 package cn.allbs.utils;
 
+import cn.allbs.constant.PatternConstant;
+import cn.allbs.constant.StringPoolConstant;
 import cn.allbs.enums.MathExtentEnum;
 import lombok.experimental.UtilityClass;
 
@@ -46,13 +48,13 @@ public class IntervalUtil {
     private static String getFormulaByAllInterval(String dataValue, String interval) {
         StringBuilder buff = new StringBuilder();
         //如：（125%,135%）U (70%,80%)
-        for (String limit : interval.split("U")) {
+        for (String limit : interval.split(StringPoolConstant.U)) {
             buff.append("(").append(getFormulaByInterval(dataValue, limit)).append(")").append("||");
         }
-        String allLimitInvel = buff.toString();
-        int index = allLimitInvel.lastIndexOf("||");
-        allLimitInvel = allLimitInvel.substring(0, index);
-        return allLimitInvel;
+        String allLimitIntel = buff.toString();
+        int index = allLimitIntel.lastIndexOf("||");
+        allLimitIntel = allLimitIntel.substring(0, index);
+        return allLimitIntel;
     }
 
     /**
@@ -66,13 +68,13 @@ public class IntervalUtil {
     private static String getFormulaByInterval(String dataValue, String interval) {
         StringBuilder buff = new StringBuilder();
         //如：[75,80)、≥80
-        for (String halfInterval : interval.split(",")) {
+        for (String halfInterval : interval.split(StringPoolConstant.COMMA)) {
             buff.append(getFormulaByHalfInterval(halfInterval, dataValue)).append(" && ");
         }
-        String limitInvel = buff.toString();
-        int index = limitInvel.lastIndexOf(" && ");
-        limitInvel = limitInvel.substring(0, index);
-        return limitInvel;
+        String limitIntel = buff.toString();
+        int index = limitIntel.lastIndexOf(" && ");
+        limitIntel = limitIntel.substring(0, index);
+        return limitIntel;
     }
 
     /**
@@ -89,14 +91,14 @@ public class IntervalUtil {
     private static String getFormulaByHalfInterval(String halfInterval, String dateValue) {
         halfInterval = halfInterval.trim();
         //包含无穷大则不需要公式
-        if (halfInterval.contains("∞")) {
+        if (halfInterval.contains(StringPoolConstant.INFINITY)) {
             return "1 == 1";
         }
         StringBuilder formula = new StringBuilder();
         String data;
         String opera;
         //表示判断方向（如>）在前面 如：≥80%
-        if (halfInterval.matches("^([<>≤≥\\[(]{1}(-?\\d+.?\\d*%?))$")) {
+        if (halfInterval.matches(PatternConstant.INTERVAL_SYMBOL)) {
             opera = halfInterval.substring(0, 1);
             data = halfInterval.substring(1);
         } else {//[130、145)
@@ -117,8 +119,8 @@ public class IntervalUtil {
      * @return 表达式
      */
     private static double dealPercent(String str) {
-        double d = 0.0;
-        if (str.contains("%")) {
+        double d;
+        if (str.contains(StringPoolConstant.PERCENT)) {
             str = str.substring(0, str.length() - 1);
             d = Double.parseDouble(str) / 100;
         } else {

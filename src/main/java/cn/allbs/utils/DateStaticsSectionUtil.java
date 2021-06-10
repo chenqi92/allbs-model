@@ -1,5 +1,6 @@
 package cn.allbs.utils;
 
+import cn.allbs.constant.ParamConstant;
 import cn.hutool.core.convert.Convert;
 import lombok.experimental.UtilityClass;
 
@@ -221,7 +222,7 @@ public class DateStaticsSectionUtil {
      */
     public Map<String, BigDecimal> yearMonth(int year, String pattern) {
         Map<String, BigDecimal> result = new LinkedHashMap<>(17);
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= ParamConstant.MONTH_COUNT; i++) {
             LocalDate date = LocalDate.of(year, i, 1);
             result.put(date.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
         }

@@ -1,6 +1,7 @@
 package cn.allbs.utils;
 
 import cn.allbs.constant.CommonConstant;
+import cn.allbs.constant.ParamConstant;
 import cn.allbs.enums.CoordinateSystemEnum;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.json.JSONArray;
@@ -58,10 +59,10 @@ public class LngLatUtil {
         double sinU1cosU2 = sinU1 * cosU2;
         double cosU1cosU2 = cosU1 * cosU2;
         double lambda = omega;
-        double A = 0.0D;
+        double a = 0.0D;
         double sigma = 0.0D;
         double deltaSigma = 0.0D;
-        for (int i = 0; i < 20; ++i) {
+        for (int i = 0; i < ParamConstant.OBLIQUENESS_NUM; ++i) {
             double lambda0 = lambda;
             double sinLambda = Math.sin(lambda);
             double cosLambda = Math.cos(lambda);
@@ -76,7 +77,7 @@ public class LngLatUtil {
             double cos2SigmaM = BigDecimal.valueOf(cos2alpha).equals(BigDecimal.valueOf(0)) ? 0.0D : cosSigma - 2.0D * sinU1sinU2 / cos2alpha;
             double u2 = cos2alpha * a2b2b2;
             double cos2SigmaM2 = cos2SigmaM * cos2SigmaM;
-            A = 1.0D + u2 / 16384.0D * (4096.0D + u2 * (-768.0D + u2 * (320.0D - 175.0D * u2)));
+            a = 1.0D + u2 / 16384.0D * (4096.0D + u2 * (-768.0D + u2 * (320.0D - 175.0D * u2)));
             double B = u2 / 1024.0D * (256.0D + u2 * (-128.0D + u2 * (74.0D - 47.0D * u2)));
             deltaSigma = B * sinSigma * (cos2SigmaM + B / 4.0D * (cosSigma * (-1.0D + 2.0D * cos2SigmaM2) - B / 6.0D * cos2SigmaM * (-3.0D + 4.0D * sin2Sigma) * (-3.0D + 4.0D * cos2SigmaM2)));
             double C = f / 16.0D * cos2alpha * (4.0D + f * (4.0D - 3.0D * cos2alpha));
@@ -86,7 +87,7 @@ public class LngLatUtil {
                 break;
             }
         }
-        return b * A * (sigma - deltaSigma);
+        return b * a * (sigma - deltaSigma);
     }
 
     /**
@@ -123,14 +124,14 @@ public class LngLatUtil {
     public double getDistance(double startLng, double startLat, double endLng, double endLat, CoordinateSystemEnum coordinateSystemEnum) {
         // 火星坐标系转化
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
-            double[] start = GPSConverterUtils.gcj02towgs84(startLng, startLat);
-            double[] end = GPSConverterUtils.gcj02towgs84(endLng, endLat);
+            double[] start = GPSConverterUtils.gcj02toWgs84(startLng, startLat);
+            double[] end = GPSConverterUtils.gcj02toWgs84(endLng, endLat);
             return getDistance(start[0], start[1], end[0], end[1]);
         }
         // 百度坐标系转换
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
-            double[] start = GPSConverterUtils.bd09towgs84(startLng, startLat);
-            double[] end = GPSConverterUtils.bd09towgs84(endLng, endLat);
+            double[] start = GPSConverterUtils.bd09toWgs84(startLng, startLat);
+            double[] end = GPSConverterUtils.bd09toWgs84(endLng, endLat);
             return getDistance(start[0], start[1], end[0], end[1]);
         }
         return getDistance(startLng, startLat, endLng, endLat);
@@ -168,21 +169,22 @@ public class LngLatUtil {
      * <p>
      * 根据一点的坐标与距离，以及方向，计算另外一点的位置（不带入扁率）正北0度即为纬度轴,横向为经度轴
      *
-     * @param angle    角度，从正北顺时针方向开始计算
-     * @param startLng 起始点经度
-     * @param startLat 起始点纬度
-     * @param distance 距离，单位m
+     * @param angle                角度，从正北顺时针方向开始计算
+     * @param startLng             起始点经度
+     * @param startLat             起始点纬度
+     * @param distance             距离，单位m
+     * @param coordinateSystemEnum 坐标系
      * @return 经纬度map
      */
     public Map<String, Double> calLocationByDistanceAndLocationAndDirection(double angle, double startLng, double startLat, double distance, CoordinateSystemEnum coordinateSystemEnum) {
         // 火星坐标系转化
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
-            double[] trans = GPSConverterUtils.gcj02towgs84(startLng, startLat);
+            double[] trans = GPSConverterUtils.gcj02toWgs84(startLng, startLat);
             return calLocationByDistanceAndLocationAndDirection(angle, trans[0], trans[1], distance);
         }
         // 百度坐标系转换
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
-            double[] trans = GPSConverterUtils.bd09towgs84(startLng, startLat);
+            double[] trans = GPSConverterUtils.bd09toWgs84(startLng, startLat);
             return calLocationByDistanceAndLocationAndDirection(angle, trans[0], trans[1], distance);
         }
         return calLocationByDistanceAndLocationAndDirection(angle, startLng, startLat, distance);
@@ -191,12 +193,11 @@ public class LngLatUtil {
     /**
      * 判断一个点是否在圆形区域内
      *
-     * @param radius 半径
      * @param lat1   圆心纬度
      * @param lng1   圆心经度
      * @param lat2   坐标纬度
      * @param lng2   坐标经度
-     * @param radius 需要计算的半径
+     * @param radius 需要计算的半径d
      * @return true 在范围内 false 不在范围内
      */
     public static boolean isInCircle(double lng1, double lat1, double lng2, double lat2, double radius) {
@@ -206,7 +207,6 @@ public class LngLatUtil {
     /**
      * 判断一个点是否在圆形区域内 带入坐标系
      *
-     * @param radius               半径
      * @param lat1                 圆心纬度
      * @param lng1                 圆心经度
      * @param lat2                 坐标纬度
@@ -255,13 +255,13 @@ public class LngLatUtil {
     public static boolean isInPolygon(double pointLon, double pointLat, JSONArray points, CoordinateSystemEnum coordinateSystemEnum) {
         // 火星坐标系转化
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
-            double[] trans = GPSConverterUtils.gcj02towgs84(pointLon, pointLat);
+            double[] trans = GPSConverterUtils.gcj02toWgs84(pointLon, pointLat);
             pointLon = trans[0];
             pointLat = trans[1];
         }
         // 百度坐标系转换
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
-            double[] trans = GPSConverterUtils.bd09towgs84(pointLon, pointLat);
+            double[] trans = GPSConverterUtils.bd09toWgs84(pointLon, pointLat);
             pointLon = trans[0];
             pointLat = trans[1];
         }
@@ -276,13 +276,13 @@ public class LngLatUtil {
             polygonPointY = points.getJSONObject(i).getDouble("y");
             // 火星坐标系转化
             if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
-                double[] trans = GPSConverterUtils.gcj02towgs84(polygonPointX, polygonPointY);
+                double[] trans = GPSConverterUtils.gcj02toWgs84(polygonPointX, polygonPointY);
                 polygonPointX = trans[0];
                 polygonPointY = trans[1];
             }
             // 百度坐标系转换
             if (coordinateSystemEnum.equals(CoordinateSystemEnum.BD09)) {
-                double[] trans = GPSConverterUtils.bd09towgs84(polygonPointX, polygonPointY);
+                double[] trans = GPSConverterUtils.bd09toWgs84(polygonPointX, polygonPointY);
                 polygonPointX = trans[0];
                 polygonPointY = trans[1];
             }
@@ -333,12 +333,9 @@ public class LngLatUtil {
         double maxAngel = angel + diffuse;
         // 计算斜边
         double st = Math.atan2(checkLat - startLat, checkLng - startLng);
-        if (IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st - 2 * Math.PI)
+        return IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st - 2 * Math.PI)
                 || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st)
-                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st + 2 * Math.PI)) {
-            return true;
-        }
-        return false;
+                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st + 2 * Math.PI);
     }
 
     /**

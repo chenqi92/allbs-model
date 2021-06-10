@@ -52,4 +52,14 @@ public interface ParamConstant {
     Integer EXCESSIVE_POLLUTANT_MIN_LIMIT = 100;
 
     char[] PIXEL = {'@', '#', '8', '&', 'o', ':', '*', '.', ' '};
+
+    /**
+     * 总月份
+     */
+    Integer MONTH_COUNT = 12;
+
+    /**
+     * 代入偏移量计算
+     */
+    Integer OBLIQUENESS_NUM = 20;
 }

@@ -68,9 +68,9 @@ public class ImageToAsciiUtil {
      */
     public BufferedImage makeSmallImage(String srcImageName, int dstMaxSize, int widthBlowRate) {
         File srcImageFile = new File(srcImageName);
-        BufferedImage tagImage = null;
-        Image srcImage = null;
-        try (FileOutputStream fileOutputStream = null) {
+        BufferedImage tagImage;
+        Image srcImage;
+        try (FileOutputStream ignored = null) {
             srcImage = ImageIO.read(srcImageFile);
             // 原图片宽度
             int srcWidth = srcImage.getWidth(null);

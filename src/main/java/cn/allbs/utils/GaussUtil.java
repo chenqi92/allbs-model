@@ -8,10 +8,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.NumberUtil;
 import lombok.experimental.UtilityClass;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 高斯模型
@@ -347,22 +344,22 @@ public class GaussUtil {
         // 平移距离x
         double totalX = ws * t * speed;
         // 平移距离/步长向上取整
-        List<Double> xRange = CollUtil.toList(totalX, -totalX);
-        List<Double> yRange = CollUtil.toList(totalX, -totalX);
-        List<Double> zRange = CollUtil.toList(h);
+        Set<Double> xRange = CollUtil.newHashSet(totalX, -totalX);
+        Set<Double> yRange = CollUtil.newHashSet(totalX, -totalX);
+        Set<Double> zRange = CollUtil.newHashSet(h);
         int section = Convert.toInt(Math.ceil(totalX / step));
         for (int index = 0; index < section; index++) {
             if (index != 0) {
-                CommonUtil.notContainAdd(xRange, index * step);
-                CommonUtil.notContainAdd(xRange, -index * step);
+                xRange.add(index * step);
+                xRange.add(-index * step);
             }
-            CommonUtil.notContainAdd(yRange, index * step);
-            CommonUtil.notContainAdd(yRange, -index * step);
-            CommonUtil.notContainAdd(zRange, h + index * step);
+            yRange.add(index * step);
+            yRange.add(-index * step);
+            zRange.add(h + index * step);
             if (h - index * step <= 0) {
-                CommonUtil.notContainAdd(zRange, 0D);
+                zRange.add(0D);
             } else {
-                CommonUtil.notContainAdd(zRange, h - index * step);
+                zRange.add(h - index * step);
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
@@ -434,21 +431,21 @@ public class GaussUtil {
         // 平移距离x
         double totalX = ws * t * speed;
         // 平移距离/步长向上取整
-        List<Double> xRange = CollUtil.toList(totalX);
-        List<Double> yRange = CollUtil.toList(totalX, -totalX);
-        List<Double> zRange = CollUtil.toList(totalH);
+        Set<Double> xRange = CollUtil.newHashSet(totalX);
+        Set<Double> yRange = CollUtil.newHashSet(totalX, -totalX);
+        Set<Double> zRange = CollUtil.newHashSet(totalH);
         int section = Convert.toInt(Math.ceil(totalX / step));
         for (int index = 0; index < section; index++) {
             if (index != 0) {
-                CommonUtil.notContainAdd(xRange, index * step);
+                xRange.add(index * step);
             }
-            CommonUtil.notContainAdd(yRange, index * step);
-            CommonUtil.notContainAdd(yRange, -index * step);
-            CommonUtil.notContainAdd(zRange, totalH + index * step);
+            yRange.add(index * step);
+            yRange.add(-index * step);
+            zRange.add(totalH + index * step);
             if (totalH - index * step <= 0) {
-                CommonUtil.notContainAdd(zRange, 0D);
+                zRange.add(0D);
             } else {
-                CommonUtil.notContainAdd(zRange, totalH - index * step);
+                zRange.add(totalH - index * step);
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
@@ -513,15 +510,15 @@ public class GaussUtil {
         // 平移距离x
         double totalX = ws * t * speed;
         // 平移距离/步长向上取整
-        List<Double> xRange = CollUtil.toList(totalX);
-        List<Double> yRange = CollUtil.toList(0D, totalX, -totalX);
-        List<Double> zRange = CollUtil.toList(0D, totalX);
+        Set<Double> xRange = CollUtil.newHashSet(totalX);
+        Set<Double> yRange = CollUtil.newHashSet(0D, totalX, -totalX);
+        Set<Double> zRange = CollUtil.newHashSet(0D, totalX);
         int section = Convert.toInt(Math.ceil(totalX / step));
         for (int index = 1; index < section; index++) {
-            CommonUtil.notContainAdd(xRange, index * step);
-            CommonUtil.notContainAdd(yRange, index * step);
-            CommonUtil.notContainAdd(yRange, -index * step);
-            CommonUtil.notContainAdd(zRange, index * step);
+            xRange.add(index * step);
+            yRange.add(index * step);
+            yRange.add(-index * step);
+            zRange.add(index * step);
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
         for (Double aDouble : xRange) {
@@ -579,21 +576,21 @@ public class GaussUtil {
         // 平移距离x
         double totalX = ws * t * speed;
         // 平移距离/步长向上取整
-        List<Double> xRange = CollUtil.toList(totalX);
-        List<Double> yRange = CollUtil.toList(totalX, -totalX);
-        List<Double> zRange = CollUtil.toList(h);
+        Set<Double> xRange = CollUtil.newHashSet(totalX);
+        Set<Double> yRange = CollUtil.newHashSet(totalX, -totalX);
+        Set<Double> zRange = CollUtil.newHashSet(h);
         int section = Convert.toInt(Math.ceil(totalX / step));
         for (int index = 0; index < section; index++) {
             if (index != 0) {
-                CommonUtil.notContainAdd(xRange, index * step);
+                xRange.add(index * step);
             }
-            CommonUtil.notContainAdd(yRange, index * step);
-            CommonUtil.notContainAdd(yRange, -index * step);
-            CommonUtil.notContainAdd(zRange, h + index * step);
+            yRange.add(index * step);
+            yRange.add(-index * step);
+            zRange.add(h + index * step);
             if (h - index * step <= 0) {
-                CommonUtil.notContainAdd(zRange, 0D);
+                zRange.add(0D);
             } else {
-                CommonUtil.notContainAdd(zRange, h - index * step);
+                zRange.add(h - index * step);
             }
         }
         List<Map<String, Double>> cMapList = new ArrayList<>();
