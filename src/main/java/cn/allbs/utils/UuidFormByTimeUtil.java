@@ -3,6 +3,7 @@ package cn.allbs.utils;
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -16,7 +17,7 @@ public class UuidFormByTimeUtil {
     /**
      * 62位字符定义
      */
-    String[] scale = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private final String[] scale = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     /**
      * 设定当前年份为第一年
@@ -30,7 +31,7 @@ public class UuidFormByTimeUtil {
      * @param middlePrefix 标识符
      * @return 唯一标识符
      */
-    public String uuid(String headPrefix, String middlePrefix) {
+    public String uuid(String headPrefix, @NotNull String middlePrefix) {
         return uuid(currentYear, headPrefix, middlePrefix);
     }
 

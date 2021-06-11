@@ -35,7 +35,7 @@ public class LngLatUtil {
     private static final double WGS84_OBLIQUENESS = 298.257223563D;
 
     /**
-     * 计算经纬度(带扁率校准)
+     * 计算两个经纬度位置距离(带扁率校准)
      *
      * @param startLng 起始经度
      * @param startLat 起始纬度
@@ -91,7 +91,7 @@ public class LngLatUtil {
     }
 
     /**
-     * 计算经纬度（不带扁率校准, 默认为WGS84坐标）
+     * 计算经纬度距离（不带扁率校准, 默认为WGS84坐标）
      *
      * @param startLng 起始经度
      * @param startLat 起始纬度
