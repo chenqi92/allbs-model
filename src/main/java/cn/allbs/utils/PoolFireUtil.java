@@ -85,10 +85,10 @@ public class PoolFireUtil {
     /**
      * 无风时火焰表面平均辐射强度
      *
-     * @param n  效率因子
+     * @param n  效率因子 取值为0.13-0.35
      * @param hc 液体燃烧热，kJ/kg
      * @param x  目标储罐离液池中心的水平距离
-     * @param m  位池面积质量燃烧率 kg/(m2·s)
+     * @param m  单位池面积质量燃烧率 kg/(m2·s)
      * @param p0 空气密度，kg/m3
      * @param g  重力加速度，取9.8m/s2
      * @param d  液池直径，m

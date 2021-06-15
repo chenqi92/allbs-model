@@ -3,6 +3,7 @@ package cn.allbs.utils;
 import cn.allbs.constant.CommonConstant;
 import cn.allbs.constant.ParamConstant;
 import cn.allbs.enums.CoordinateSystemEnum;
+import cn.allbs.model.Point3D;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.json.JSONArray;
 import lombok.experimental.UtilityClass;
@@ -355,5 +356,28 @@ public class LngLatUtil {
             return false;
         }
         return isInSector(startLng, startLat, angel, diffuse, checkLng, checkLat);
+    }
+
+    /**
+     * 根据一点的坐标与距离，以及方向，计算另外一点的位置（不带入扁率）正北0度即为纬度轴,横向为经度轴
+     *
+     * @param angle，从正北顺时针方向开始计算
+     * @param point3D            计算位置的
+     * @param distance           距离，单位m
+     * @return 经纬度map
+     */
+    public Point3D calLocationByDistanceAndLocationAndDirection(double angle, Point3D point3D, double distance) {
+        //将距离转换成经度的计算公式
+        double sigma = distance / WGS84_EARTH_RADIUS;
+        // 转换为radian，否则结果会不正确
+        angle = Math.toRadians(angle);
+        point3D.setX(Math.toRadians(point3D.getX()));
+        point3D.setY(Math.toRadians(point3D.getY()));
+        double lat = Math.asin(Math.sin(point3D.getY()) * Math.cos(sigma) + Math.cos(point3D.getY()) * Math.sin(sigma) * Math.cos(angle));
+        double lng = point3D.getX() + Math.atan2(Math.sin(angle) * Math.sin(sigma) * Math.cos(point3D.getY()), Math.cos(sigma) - Math.sin(point3D.getY()) * Math.sin(lat));
+        // 转为正常的10进制经纬度
+        lng = Math.toDegrees(lng);
+        lat = Math.toDegrees(lat);
+        return new Point3D(NumberUtil.round(lng, 6).doubleValue(), NumberUtil.round(lat, 6).doubleValue(), point3D.getZ());
     }
 }
