@@ -95,8 +95,9 @@ public class SpaceGeometryUtil {
     /**
      * 计算地球中立方体顶点坐标
      *
-     * @param point3D  立方体中心点的坐标
-     * @param distance 立方体边长/2
+     * @param point3D   立方体中心点的坐标
+     * @param distance  立方体边长/2
+     * @param extendDis 辅助计算空间点的距离
      * @return 地球中立方体8个顶点坐标
      */
     public Set<Point3D> earthBatchPeak(Point3D point3D, double distance, double extendDis) {
