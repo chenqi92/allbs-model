@@ -56,4 +56,17 @@ public class EarthPoint3D {
         this.y = y;
         this.z = z;
     }
+
+    /**
+     * 构造器
+     *
+     * @param x x轴平移距离
+     * @param y y轴平移距离
+     * @param z z轴平移距离
+     */
+    public EarthPoint3D(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 }

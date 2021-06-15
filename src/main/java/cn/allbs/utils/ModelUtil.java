@@ -3,6 +3,8 @@ package cn.allbs.utils;
 import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
 import java.util.HashSet;
@@ -161,22 +163,27 @@ public class ModelUtil {
      * @param lat            起火中心点纬度
      * @param height         起火中心点高度
      * @param distance       扩散距离
-     * @param extendDistance 辅助扩散距离用于渲染
+     * @param step 步长
      * @return 空间点中气体浓度
      */
-    public Set<SpacePoint> gaussSmokeRegiment(double ws, double t, double q, double angle, double lng, double lat, double height, double distance, double extendDistance) {
+    public Set<SpacePoint> gaussSmokeRegiment(double ws, double t, double q, double angle, double lng, double lat, double height, double distance, double step) {
         Point3D centerPoint = new Point3D(lng, lat, height);
         Set<SpacePoint> poolFirePoints = new HashSet<>();
         // 查询所有待计算的点位
-        Set<EarthPoint3D> points = SpaceGeometryUtil.earthBatchPeakDetail(centerPoint, distance, extendDistance, angle);
+        Set<EarthPoint3D> points = SpaceGeometryUtil.totalEarthBatchPeakDetailWithoutWd(centerPoint, distance, angle, step);
         points.forEach(a -> {
             if (a.getHeight() < 0) {
                 a.setZ(-(distance + a.getHeight()));
                 a.setHeight(0.0);
             }
+            if (a.getX() == 0) {
+                return;
+            }
             // 气体泄露
-            double c = GaussUtil.smokeConcentration(q, ws, t, a.getX(), a.getY(), a.getZ());
-            poolFirePoints.add(new SpacePoint(a, c));
+            double c = NumberUtil.round(GaussUtil.smokeConcentration(q, ws, t, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
+            if (ObjectUtil.isNotNull(c) && c != 0) {
+                poolFirePoints.add(new SpacePoint(a, c));
+            }
         });
         return poolFirePoints;
     }
@@ -193,24 +200,24 @@ public class ModelUtil {
      * @param lat            起火中心点纬度
      * @param height         起火中心点高度
      * @param distance       扩散距离
-     * @param extendDistance 辅助扩散距离用于渲染
+     * @param step 步长
      * @return 空间点中气体浓度
      */
-    public Set<SpacePoint> gaussPlumeWithFactor(double ws, double q, Integer l, double angle, double h, double lng, double lat, double height, double distance, double extendDistance) {
+    public Set<SpacePoint> gaussPlumeWithFactor(double ws, double q, Integer l, double angle, double h, double lng, double lat, double height, double distance, double step) {
         Point3D centerPoint = new Point3D(lng, lat, height);
         Set<SpacePoint> poolFirePoints = new HashSet<>();
+        Set<EarthPoint3D> points = SpaceGeometryUtil.EarthBatchPeakDetailToWd(centerPoint, distance, angle, step);
         // 查询所有待计算的点位
-        Set<EarthPoint3D> points = SpaceGeometryUtil.earthBatchPeakDetail(centerPoint, distance, extendDistance, angle);
         points.forEach(a -> {
             if (a.getHeight() < 0) {
                 a.setZ(-(distance + a.getHeight()));
                 a.setHeight(0.0);
                 // 计算地面点源气体泄露
-                double c = GaussUtil.allGroundReflection(q, ws, h, a.getX(), Math.abs(a.getY()), l);
+                double c = NumberUtil.round(GaussUtil.allGroundReflection(q, ws, h, a.getX(), Math.abs(a.getY()), l), 3).doubleValue();
                 poolFirePoints.add(new SpacePoint(a, c));
             } else {
                 // 计算高架点源气体泄露
-                double c = GaussUtil.highPowerContinuousDiffusion(q, ws, h, a.getX(), a.getY(), a.getZ(), l);
+                double c = NumberUtil.round(GaussUtil.highPowerContinuousDiffusion(q, ws, h, a.getX(), Math.abs(a.getY()), a.getZ(), l), 3).doubleValue();
                 poolFirePoints.add(new SpacePoint(a, c));
             }
 
@@ -221,38 +228,37 @@ public class ModelUtil {
     /**
      * 不带入扩散系数计算高斯烟羽模型
      *
-     * @param q              物料连续泄漏的质量流量，单位kg/s
-     * @param u              平均风速m/s
-     * @param h              泄露源源高
-     * @param angle          风向角度
-     * @param lng            起火中心点经度
-     * @param lat            起火中心点纬度
-     * @param height         起火中心点高度
-     * @param distance       扩散距离
-     * @param extendDistance 辅助扩散距离用于渲染
+     * @param q        物料连续泄漏的质量流量，单位kg/s
+     * @param u        平均风速m/s
+     * @param h        泄露源源高
+     * @param angle    风向角度
+     * @param lng      起火中心点经度
+     * @param lat      起火中心点纬度
+     * @param distance 扩散距离
+     * @param step     步长
      * @return 空间点中气体浓度
      */
-    public Set<SpacePoint> gaussPlumeWithoutFactor(double q, double u, double angle, double h, double lng, double lat, double height, double distance, double extendDistance) {
-        Point3D centerPoint = new Point3D(lng, lat, height);
+    public Set<SpacePoint> gaussPlumeWithoutFactor(double q, double u, double angle, double h, double lng, double lat, double distance, double step) {
+        Point3D centerPoint = new Point3D(lng, lat, h);
         Set<SpacePoint> poolFirePoints = new HashSet<>();
         // 查询所有待计算的点位
-        Set<EarthPoint3D> points = SpaceGeometryUtil.earthBatchPeakDetail(centerPoint, distance, extendDistance, angle);
+        Set<EarthPoint3D> points = SpaceGeometryUtil.EarthBatchPeakDetailToWd(centerPoint, distance, angle, step);
         points.forEach(a -> {
             if (a.getHeight() < 0) {
                 a.setZ(-(distance + a.getHeight()));
                 a.setHeight(0.0);
             }
             // 气体泄露
-            double c = GaussUtil.powerContinuousDiffusionWithoutSigma(q, u, h, a.getX(), a.getY(), a.getZ());
-            poolFirePoints.add(new SpacePoint(a, c));
+            double c = NumberUtil.round(GaussUtil.powerContinuousDiffusionWithoutSigma(q, u, h, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
+            if (c != 0) {
+                poolFirePoints.add(new SpacePoint(a, c));
+            }
         });
         return poolFirePoints;
     }
 
     public static void main(String[] args) {
-        Set<SpacePoint> firePoint = poolFire(9.8, 1.29, 0.24, 42381, 0.283, 4, 118.864, 37.413, 20.2, 10, 1);
-        Set<SpacePoint> horPoint = horizontalFire(45000, 2, 118.864, 37.413, 20.2, 10, 1);
+        Set<SpacePoint> firePoint = gaussSmokeRegiment(3.4, 5, 95000, 90, 118.864, 37.413, 2, 300, 10);
         System.out.println(firePoint);
-        System.out.println(horPoint);
     }
 }
