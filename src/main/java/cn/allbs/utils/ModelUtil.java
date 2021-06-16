@@ -256,9 +256,4 @@ public class ModelUtil {
         });
         return poolFirePoints;
     }
-
-    public static void main(String[] args) {
-        Set<SpacePoint> firePoint = gaussSmokeRegiment(3.4, 5, 95000, 90, 118.864, 37.413, 2, 300, 10);
-        System.out.println(firePoint);
-    }
 }
