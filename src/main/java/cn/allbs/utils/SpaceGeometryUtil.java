@@ -83,8 +83,8 @@ public class SpaceGeometryUtil {
      */
     public Set<Point3D> earthCubePeak(Point3D point3D, double distance) {
         Set<Point3D> points = new HashSet<>();
-        points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(270, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance));
-        points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(270, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance));
+        points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(225, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance));
+        points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(225, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance));
         points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(135, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance));
         points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(135, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance));
         points.add(LngLatUtil.calLocationByDistanceAndLocationAndDirection(45, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance));
@@ -119,8 +119,8 @@ public class SpaceGeometryUtil {
      */
     public Set<EarthPoint3D> earthCubePeakDetail(Point3D point3D, double distance, double angle) {
         Set<EarthPoint3D> points = new HashSet<>();
-        points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 270, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance), -distance, -distance, distance));
-        points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 270, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance), -distance, -distance, -distance));
+        points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 225, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance), -distance, -distance, distance));
+        points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 225, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance), -distance, -distance, -distance));
         points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 135, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() - distance), Math.sqrt(2) * distance), distance, -distance, -distance));
         points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 135, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance), distance, -distance, distance));
         points.add(new EarthPoint3D(LngLatUtil.calLocationByDistanceAndLocationAndDirection(angle + 45, new Point3D(point3D.getX(), point3D.getY(), point3D.getZ() + distance), Math.sqrt(2) * distance), distance, distance, distance));

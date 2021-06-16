@@ -43,7 +43,7 @@ public class ModelUtil {
             if (a.getZ() < 0) {
                 a.setZ(0);
             }
-            double x = a.distance(centerPoint);
+            double x = LngLatUtil.getDistance(a.getX(), a.getY(), centerPoint.getX(), centerPoint.getY());
             double c = PoolFireUtil.count(n, hc, x, m, p0, g, d);
             poolFirePoints.add(new SpacePoint(a, c));
         });
@@ -71,7 +71,7 @@ public class ModelUtil {
             if (a.getZ() < 0) {
                 a.setZ(0);
             }
-            double x = a.distance(centerPoint);
+            double x = LngLatUtil.getDistance(a.getX(), a.getY(), centerPoint.getX(), centerPoint.getY());
             double c = HorizontalJetFireUtil.count(hc, x, m);
             poolFirePoints.add(new SpacePoint(a, c));
         });
@@ -99,7 +99,7 @@ public class ModelUtil {
             if (a.getZ() < 0) {
                 a.setZ(0);
             }
-            double x = a.distance(centerPoint);
+            double x = LngLatUtil.getDistance(a.getX(), a.getY(), centerPoint.getX(), centerPoint.getY());
             double c = VesselExplosionUtil.count(p, v, x);
             poolFirePoints.add(new SpacePoint(a, c));
         });
@@ -142,7 +142,7 @@ public class ModelUtil {
                 a.setZ(0);
             }
             // 计算距离
-            double x = a.distance(centerPoint);
+            double x = LngLatUtil.getDistance(a.getX(), a.getY(), centerPoint.getX(), centerPoint.getY());
             // 计算气云质量
             double w = EvaporationUtil.totalEvaporation(qm, cp, tt, tb, hv, a1, t0, h, t, u, r, m, t1, t2, t3);
             // 蒸汽云爆炸
