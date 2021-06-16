@@ -62,4 +62,9 @@ public interface ParamConstant {
      * 代入偏移量计算
      */
     Integer OBLIQUENESS_NUM = 20;
+
+    /**
+     * 0 度下开尔文温度
+     */
+    Double KELVIN_DEGREE = 273.15;
 }

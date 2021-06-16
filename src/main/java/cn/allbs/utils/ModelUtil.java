@@ -44,7 +44,7 @@ public class ModelUtil {
                 a.setZ(0);
             }
             double x = a.distance(centerPoint);
-            double c = PoolFireUtil.countWithoutWind(n, hc, x, m, p0, g, d);
+            double c = PoolFireUtil.count(n, hc, x, m, p0, g, d);
             poolFirePoints.add(new SpacePoint(a, c));
         });
         return poolFirePoints;

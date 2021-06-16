@@ -43,14 +43,14 @@ public class PoolFireUtil {
      * 燃烧速度
      *
      * @param hc 液体燃烧热 J/Kg
-     * @param cp 液体比压定热容
+     * @param cp 液体比压定热容 J/(kg·K)
      * @param tb 液体沸点 K
      * @param t0 环境温度 K
-     * @param h  液体的气化热 J/Kg
+     * @param h  液体的汽化热 J/Kg
      * @return 单位池面积燃烧率 kg/(m2·s)
      */
     public Double mf(double hc, double cp, double tb, double t0, double h) {
-        return 0.01 * hc / (cp * (tb - t0)) + h;
+        return 0.001 * hc / (cp * (tb - t0) + h);
     }
 
     /**
@@ -62,8 +62,8 @@ public class PoolFireUtil {
      * @param d  液池直径，m
      * @return 火焰高度 m
      */
-    public Double fireHeightWithWind(double m, double p0, double g, double d) {
-        return 42 * Math.pow(m / (p0 * Math.sqrt(g * d)), 0.61);
+    public Double fireHeightWithoutWind(double m, double p0, double g, double d) {
+        return 42 * d * Math.pow(m / (p0 * Math.sqrt(g * d)), 0.61);
     }
 
     /**
@@ -77,9 +77,9 @@ public class PoolFireUtil {
      * @param pv 可燃液体的蒸气密度，kg/m3
      * @return 火焰高度 m
      */
-    public Double fireHeightWithoutWind(double m, double p0, double g, double d, double u, double pv) {
+    public Double fireHeightWithWind(double m, double p0, double g, double d, double u, double pv) {
         double uf = u / Math.pow(g * m * d / pv, 1 / (float) 3);
-        return 55 * Math.pow(m / (p0 * Math.sqrt(g * d)), 0.67) * Math.pow(uf, -0.21);
+        return 55 * d * Math.pow(m / (p0 * Math.sqrt(g * d)), 0.67) * Math.pow(uf, -0.21);
     }
 
     /**
@@ -96,7 +96,7 @@ public class PoolFireUtil {
      */
     public Double countWithoutWind(double n, double hc, double x, double m, double p0, double g, double d) {
         // 火焰可见高度m
-        double hei = fireHeightWithWind(m, p0, g, d);
+        double hei = fireHeightWithoutWind(m, p0, g, d);
         // 火焰高度与火焰半径的比
         double h = 2 * hei / d;
         // 观察者距液池中心的距离与火焰半径的比
@@ -120,11 +120,71 @@ public class PoolFireUtil {
      */
     public Double countWithWind(double n, double hc, double x, double m, double p0, double g, double d, double u, double pv) {
         // 火焰可见高度m
-        double hei = fireHeightWithoutWind(m, p0, g, d, u, pv);
+        double hei = fireHeightWithWind(m, p0, g, d, u, pv);
         // 火焰高度与火焰半径的比
         double h = 2 * hei / d;
         // 观察者距液池中心的距离与火焰半径的比
         double s = 2 * x / d;
         return mudan(s, h, x, n, m, d, hc);
+    }
+
+    /**
+     * 热辐射通量
+     *
+     * @param d  液池直径 m
+     * @param h  火焰高度 m
+     * @param v  燃烧速度  kg/(m2·s)
+     * @param n  效率因子 取值为0.13-0.35
+     * @param hc 液体燃烧热，kJ/kg
+     * @return 液池燃烧时放出的总热辐射通量 W
+     */
+    public Double thermalRadiationFlux(double d, double h, double v, double n, double hc) {
+        double r = d / 2;
+        return (Math.PI * Math.pow(r, 2) + 2 * Math.PI * r * h) * v * n * hc / (72 * Math.pow(v, 0.6) + 1);
+    }
+
+    /**
+     * 入射热辐射强度
+     *
+     * @param q  热辐射通量 W
+     * @param tc 热传导系数，在无相对理想的数据时，可取值为1
+     * @param x  目标点到液池中心距离
+     * @return 入射通量 W/m2
+     */
+    public Double heatRadiationIntensity(double q, double tc, double x) {
+        return q * tc / (4 * Math.PI * Math.pow(x, 2));
+    }
+
+    /**
+     * 无风时火焰表面平均辐射强度
+     *
+     * @param n  效率因子 取值为0.13-0.35
+     * @param hc 液体燃烧热，kJ/kg
+     * @param x  目标储罐离液池中心的水平距离
+     * @param m  单位池面积质量燃烧率 kg/(m2·s)
+     * @param p0 空气密度，kg/m3
+     * @param g  重力加速度，取9.8m/s2
+     * @param d  液池直径，m
+     * @return 火焰表面平均辐射强度 kW/m2
+     */
+    public Double count(double n, double hc, double x, double m, double p0, double g, double d) {
+        // 火焰高度
+        double fh = fireHeightWithoutWind(m, p0, g, d);
+        // 热辐射通量
+        double q = thermalRadiationFlux(d, fh, m, n, hc);
+        // 距离x处辐射强度
+        return heatRadiationIntensity(q, 1, x);
+    }
+
+    /**
+     * 根据热射通量计算距离
+     *
+     * @param q  总热辐射通量 W
+     * @param tc 热传导系数，在无相对理想的数据时，可取值为1
+     * @param i  入射通量 kW/m2
+     * @return 距离 m
+     */
+    public Double x(double q, double tc, double i) {
+        return Math.sqrt(q * tc / (4 * Math.PI * i));
     }
 }
