@@ -179,7 +179,7 @@ public class PoolFireUtil {
     /**
      * 根据热射通量计算距离
      *
-     * @param q  总热辐射通量 W
+     * @param q  总热辐射通量 KW
      * @param tc 热传导系数，在无相对理想的数据时，可取值为1
      * @param i  入射通量 kW/m2
      * @return 距离 m

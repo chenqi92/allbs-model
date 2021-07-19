@@ -334,9 +334,9 @@ public class LngLatUtil {
         double maxAngel = angel + diffuse;
         // 计算斜边
         double st = Math.atan2(checkLat - startLat, checkLng - startLng);
-        return IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st - 2 * Math.PI)
-                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st)
-                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st + 2 * Math.PI);
+        return IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st - 2 * Math.PI) * 180 / Math.PI)
+                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st * 180 / Math.PI)
+                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st + 2 * Math.PI) * 180 / Math.PI);
     }
 
     /**

@@ -245,10 +245,10 @@ public class GaussUtil {
      *
      * @param q 物料连续泄漏的质量流量，单位kg/s
      * @param u 平均风速m/s
-     * @param h 泄露源源高
-     * @param x x距离
-     * @param y y距离
-     * @param z z距离
+     * @param h 泄露源源高 m
+     * @param x x距离 m
+     * @param y y距离 m
+     * @param z z距离 m
      * @return 空间上某点的污染物浓度 mg/m3
      */
     public double powerContinuousDiffusionWithoutSigma(double q, double u, double h, double x, double y, double z) {
