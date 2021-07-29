@@ -8,7 +8,7 @@
     <artifactId>allbs-model</artifactId>
     <name>allbs-model</name>
     <packaging>jar</packaging>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
     <description>智慧环保可能会用到的模型计算</description>
     <url>www.allbs.cn</url>
 
