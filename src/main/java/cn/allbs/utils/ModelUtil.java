@@ -3,7 +3,6 @@ package cn.allbs.utils;
 import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
@@ -11,7 +10,6 @@ import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 模型计算的工具类
@@ -273,14 +271,13 @@ public class ModelUtil {
      * @param z     水平高度
      * @return 空间点中气体浓度
      */
-    public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Double[] ue,Integer step,Double z) {
+    public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Double[] ue, Integer step, Double z) {
         List<Map<String, Object>> result = new ArrayList<>();
         // 数据校验
-        if (ue != null) {
-            if (se > 360 || se < 0) {
-                return null;
-            }
-        } else if (ce == null || ce < 0) {
+        if (se > 360 || se < 0) {
+            return null;
+        }
+        if (ce == null || ce < 0) {
             return null;
         }
 
@@ -296,21 +293,16 @@ public class ModelUtil {
             for (int o = 0; o <= 2000; o += step) {
                 // y方向增值
                 Double ie = Convert.toDouble(o);
-                Integer currLevel = calculate2(q,ne,ie,z,h,ce,Double.valueOf(0));
+                Integer currLevel = calculate2(q, ne, ie, z, h, ce, Double.valueOf(0));
                 if (currLevel <= 0) {
                     break bb;
                 }
 
                 // 边界经纬度list加上一个经纬度点
-//                ie = ie - step;
-                Double[] spreadMercator = new Double[]{originMercator[0] + ne , originMercator[1] + ie };
+                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
                 Double[] spreadLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadMercator[0], spreadMercator[1]);
                 // 旋转
                 Double[] spreadRotateLnglat = LngLatUtil.route(ue, spreadLnglat, se);
-//                    Double[] spreadRotateMercator = WGS84MercatorToLngLatUtil.lonLatToMercator(spreadRotateLnglat[1], spreadRotateLnglat[0]);
-//                    // 偏移
-//                    Double[] spreadDeviationMercator = LngLatUtil.deviation(spreadRotateMercator);
-//                    Double[] spreadDeviationLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadDeviationMercator[0], spreadDeviationMercator[1]);
                 Map<String, Object> levLngLatMap = new HashMap<>();
                 levLngLatMap.put("level", currLevel);
                 levLngLatMap.put("lng", spreadRotateLnglat[0]);
@@ -322,25 +314,20 @@ public class ModelUtil {
 
         // 计算扩散区域下半部分，同上
         cc:
-        for (int  a = 0; a <= 10000; a += step) {
+        for (int a = 0; a <= 10000; a += step) {
             Double ne = Convert.toDouble(a);
             dd:
             for (int o = -step; o >= -4000; o -= step) {
                 Double ie = Convert.toDouble(o);
-                Integer currLevel = calculate2(q,ne,ie,z,h,ce,Double.valueOf(0));
+                Integer currLevel = calculate2(q, ne, ie, z, h, ce, Double.valueOf(0));
                 if (currLevel <= 0) {
                     break dd;
                 }
                 // 边界经纬度list加上一个经纬度点
-//                ie = ie + step;
                 Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
                 Double[] spreadLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadMercator[0], spreadMercator[1]);
                 // 旋转
                 Double[] spreadRotateLnglat = LngLatUtil.route(ue, spreadLnglat, se);
-//                    Double[] spreadRotateMercator = WGS84MercatorToLngLatUtil.lonLatToMercator(spreadRotateLnglat[1], spreadRotateLnglat[0]);
-////                    // 偏移
-//                    Double[] spreadDeviationMercator = LngLatUtil.deviation(spreadRotateMercator);
-//                    Double[] spreadDeviationLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadDeviationMercator[0], spreadDeviationMercator[1]);
                 Map<String, Object> levLngLatMap = new HashMap<>();
                 levLngLatMap.put("level", currLevel);
                 levLngLatMap.put("lng", spreadRotateLnglat[0]);
@@ -353,17 +340,94 @@ public class ModelUtil {
     }
 
     /**
+     * 不带入扩散系数计算高斯烟羽模型
+     *
+     * @param q    物料连续泄漏的质量流量，单位kg/s
+     * @param ce   平均风速m/s
+     * @param h    泄露源源高
+     * @param se   风向角度
+     * @param step 步长
+     * @param z    水平高度
+     * @return 空间点中气体浓度
+     */
+    public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Integer step, Double z) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        // 数据校验
+        if (se > 360 || se < 0) {
+            return null;
+        }
+        if (ce == null || ce < 0) {
+            return null;
+        }
+
+        // 扩散原点
+        Double[] originMercator = {0D, 0D};
+
+        // 计算扩散区域上半部分
+        aa:
+        for (int a = 0; a <= 10000; a += step) {
+            // x方向增值
+            Double ne = Convert.toDouble(a);
+            bb:
+            for (int o = 0; o <= 2000; o += step) {
+                // y方向增值
+                Double ie = Convert.toDouble(o);
+                Double currPoint = calculate(q, ne, ie, z, h, ce, (double) 0);
+                if (currPoint <= 0) {
+                    break bb;
+                }
+
+                // 边界经纬度list加上一个经纬度点
+                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
+                // 旋转
+                Double[] spreadRotateLnglat = LngLatUtil.route(originMercator, spreadMercator, se);
+                Map<String, Object> levLngLatMap = new HashMap<>();
+                levLngLatMap.put("value", currPoint);
+                levLngLatMap.put("x", spreadRotateLnglat[0]);
+                levLngLatMap.put("y", spreadRotateLnglat[1]);
+                levLngLatMap.put("z", z);
+                result.add(levLngLatMap);
+            }
+        }
+
+        // 计算扩散区域下半部分，同上
+        cc:
+        for (int a = 0; a <= 10000; a += step) {
+            Double ne = Convert.toDouble(a);
+            dd:
+            for (int o = -step; o >= -4000; o -= step) {
+                Double ie = Convert.toDouble(o);
+                Double currPoint = calculate(q, ne, ie, z, h, ce, Double.valueOf(0));
+                if (currPoint <= 0) {
+                    break dd;
+                }
+                // 边界经纬度list加上一个经纬度点
+                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
+                // 旋转
+                Double[] spreadRotateLnglat = LngLatUtil.route(originMercator, spreadMercator, se);
+                Map<String, Object> levLngLatMap = new HashMap<>();
+                levLngLatMap.put("value", currPoint);
+                levLngLatMap.put("x", spreadRotateLnglat[0]);
+                levLngLatMap.put("y", spreadRotateLnglat[1]);
+                levLngLatMap.put("z", z);
+                result.add(0, levLngLatMap);
+            }
+        }
+        return result;
+    }
+
+    /**
      * @param q              物料连续泄漏的质量流量，单位kg/s
-     * @param ue              扩散原点经纬度坐标
-     * @param originMercator  扩散原点墨卡托坐标
+     * @param ue             扩散原点经纬度坐标
+     * @param originMercator 扩散原点墨卡托坐标
      * @param x              x方向增值
      * @param y              y方向增值
-     * @param ce              风速
-     * @param se              风向角
-     * @param s                 時間
+     * @param ce             风速
+     * @param se             风向角
+     * @param s              時間
      */
     public Integer calSpread(double q, Double[] ue, Double[] originMercator, double x, double y, double ce,
-                             Double se, int s,double h) {
+                             Double se, int s, double h) {
         Double n = GaussUtil.powerContinuousDiffusionWithoutSigma(q, ce, h, x, y, h);
         // 浓度值最大因子的level
         int level = calLevel(n);
@@ -373,6 +437,7 @@ public class ModelUtil {
 
     /**
      * 烟羽扩散
+     *
      * @param Q 气载污染物源强，即释放率（mg/s）
      * @param x 下风向距离（m）
      * @param y 横截风向距离（m）
@@ -380,9 +445,9 @@ public class ModelUtil {
      * @param h 排口高度
      * @param u 平均风速m/s
      * @param t 时间s
-     * @return
+     * @return 等级
      */
-    public Integer calculate2(Double Q,Double x, Double y,Double z,Double h,Double u,Double t) {
+    public Integer calculate2(Double Q, Double x, Double y, Double z, Double h, Double u, Double t) {
         // 根据大气稳定度等级-获取扩散参数值
         // Double[] spreadArray = getCardinalityArray(pointDto.getRadiationRank(), pointDto.getU());
         Double[] spreadArray = {};
@@ -394,7 +459,7 @@ public class ModelUtil {
         Double σy = a * Math.pow(x, b);
         Double σz = c * Math.pow(x, d);
         Double σx = σy;
-        Double C = (Q / (Math.pow(2 * Math.PI, 3 / 2) * σx * σy * σz)) *
+        Double C = (Q / (Math.pow(2 * Math.PI, 3 / (float) 2) * σx * σy * σz)) *
                 Math.exp(-(Math.pow(y, 2) / (2 * Math.pow(σy, 2)))) *
                 (Math.exp(-(Math.pow(z - h, 2) / (2 * Math.pow(σz, 2)))) +
                         Math.exp(-(Math.pow(z + h, 2) / (2 * Math.pow(σz, 2))))
@@ -403,6 +468,37 @@ public class ModelUtil {
         // 浓度值最大因子的level
         int level = calLevel(C);
         return level;
+    }
+
+    /**
+     * 烟羽扩散
+     *
+     * @param Q 气载污染物源强，即释放率（mg/s）
+     * @param x 下风向距离（m）
+     * @param y 横截风向距离（m）
+     * @param z 距水平的高度（m）
+     * @param h 排口高度
+     * @param u 平均风速m/s
+     * @param t 时间s
+     * @return 等级
+     */
+    public Double calculate(Double Q, Double x, Double y, Double z, Double h, Double u, Double t) {
+        // 根据大气稳定度等级-获取扩散参数值
+        Double a = 0.527;
+        Double b = 0.865;
+        Double c = 0.280;
+        Double d = 0.900;
+
+        Double σy = a * Math.pow(x, b);
+        Double σz = c * Math.pow(x, d);
+        Double σx = σy;
+        Double C = (Q / (Math.pow(2 * Math.PI, 3 / (float) 2) * σx * σy * σz)) *
+                Math.exp(-(Math.pow(y, 2) / (2 * Math.pow(σy, 2)))) *
+                (Math.exp(-(Math.pow(z - h, 2) / (2 * Math.pow(σz, 2)))) +
+                        Math.exp(-(Math.pow(z + h, 2) / (2 * Math.pow(σz, 2))))
+                ) * Math.exp(-(Math.pow(x - u * t, 2) / Math.pow(2 * σx, 2)));
+
+        return C;
     }
 
     /**
