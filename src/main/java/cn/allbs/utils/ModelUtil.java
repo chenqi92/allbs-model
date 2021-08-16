@@ -3,12 +3,15 @@ package cn.allbs.utils;
 import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 模型计算的工具类
@@ -255,5 +258,183 @@ public class ModelUtil {
             }
         });
         return poolFirePoints;
+    }
+
+
+    /**
+     * 不带入扩散系数计算高斯烟羽模型
+     *
+     * @param q        物料连续泄漏的质量流量，单位kg/s
+     * @param ce        平均风速m/s
+     * @param h        泄露源源高
+     * @param se      风向角度
+     * @param ue      扩散原点偏移后经纬度坐标
+     * @param step     步长
+     * @param z     水平高度
+     * @return 空间点中气体浓度
+     */
+    public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Double[] ue,Integer step,Double z) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        // 数据校验
+        if (ue != null) {
+            if (se > 360 || se < 0) {
+                return null;
+            }
+        } else if (ce == null || ce < 0) {
+            return null;
+        }
+
+        // 扩散原点
+        Double[] originMercator = WGS84MercatorToLngLatUtil.lonLatToMercator(ue[1], ue[0]);
+
+        // 计算扩散区域上半部分
+        aa:
+        for (int a = 0; a <= 10000; a += step) {
+            // x方向增值
+            Double ne = Convert.toDouble(a);
+            bb:
+            for (int o = 0; o <= 2000; o += step) {
+                // y方向增值
+                Double ie = Convert.toDouble(o);
+                Integer currLevel = calculate2(q,ne,ie,z,h,ce,Double.valueOf(0));
+                if (currLevel <= 0) {
+                    break bb;
+                }
+
+                // 边界经纬度list加上一个经纬度点
+//                ie = ie - step;
+                Double[] spreadMercator = new Double[]{originMercator[0] + ne , originMercator[1] + ie };
+                Double[] spreadLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadMercator[0], spreadMercator[1]);
+                // 旋转
+                Double[] spreadRotateLnglat = LngLatUtil.route(ue, spreadLnglat, se);
+//                    Double[] spreadRotateMercator = WGS84MercatorToLngLatUtil.lonLatToMercator(spreadRotateLnglat[1], spreadRotateLnglat[0]);
+//                    // 偏移
+//                    Double[] spreadDeviationMercator = LngLatUtil.deviation(spreadRotateMercator);
+//                    Double[] spreadDeviationLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadDeviationMercator[0], spreadDeviationMercator[1]);
+                Map<String, Object> levLngLatMap = new HashMap<>();
+                levLngLatMap.put("level", currLevel);
+                levLngLatMap.put("lng", spreadRotateLnglat[0]);
+                levLngLatMap.put("lat", spreadRotateLnglat[1]);
+                levLngLatMap.put("height", z);
+                result.add(levLngLatMap);
+            }
+        }
+
+        // 计算扩散区域下半部分，同上
+        cc:
+        for (int  a = 0; a <= 10000; a += step) {
+            Double ne = Convert.toDouble(a);
+            dd:
+            for (int o = -step; o >= -4000; o -= step) {
+                Double ie = Convert.toDouble(o);
+                Integer currLevel = calculate2(q,ne,ie,z,h,ce,Double.valueOf(0));
+                if (currLevel <= 0) {
+                    break dd;
+                }
+                // 边界经纬度list加上一个经纬度点
+//                ie = ie + step;
+                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
+                Double[] spreadLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadMercator[0], spreadMercator[1]);
+                // 旋转
+                Double[] spreadRotateLnglat = LngLatUtil.route(ue, spreadLnglat, se);
+//                    Double[] spreadRotateMercator = WGS84MercatorToLngLatUtil.lonLatToMercator(spreadRotateLnglat[1], spreadRotateLnglat[0]);
+////                    // 偏移
+//                    Double[] spreadDeviationMercator = LngLatUtil.deviation(spreadRotateMercator);
+//                    Double[] spreadDeviationLnglat = WGS84MercatorToLngLatUtil.mercatorToLonLat(spreadDeviationMercator[0], spreadDeviationMercator[1]);
+                Map<String, Object> levLngLatMap = new HashMap<>();
+                levLngLatMap.put("level", currLevel);
+                levLngLatMap.put("lng", spreadRotateLnglat[0]);
+                levLngLatMap.put("lat", spreadRotateLnglat[1]);
+                levLngLatMap.put("height", z);
+                result.add(0, levLngLatMap);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param q              物料连续泄漏的质量流量，单位kg/s
+     * @param ue              扩散原点经纬度坐标
+     * @param originMercator  扩散原点墨卡托坐标
+     * @param x              x方向增值
+     * @param y              y方向增值
+     * @param ce              风速
+     * @param se              风向角
+     * @param s                 時間
+     */
+    public Integer calSpread(double q, Double[] ue, Double[] originMercator, double x, double y, double ce,
+                             Double se, int s,double h) {
+        Double n = GaussUtil.powerContinuousDiffusionWithoutSigma(q, ce, h, x, y, h);
+        // 浓度值最大因子的level
+        int level = calLevel(n);
+        return level;
+    }
+
+
+    /**
+     * 烟羽扩散
+     * @param Q 气载污染物源强，即释放率（mg/s）
+     * @param x 下风向距离（m）
+     * @param y 横截风向距离（m）
+     * @param z 距水平的高度（m）
+     * @param h 排口高度
+     * @param u 平均风速m/s
+     * @param t 时间s
+     * @return
+     */
+    public Integer calculate2(Double Q,Double x, Double y,Double z,Double h,Double u,Double t) {
+        // 根据大气稳定度等级-获取扩散参数值
+        // Double[] spreadArray = getCardinalityArray(pointDto.getRadiationRank(), pointDto.getU());
+        Double[] spreadArray = {};
+        Double a = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[0] : 0.527;
+        Double b = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[1] : 0.865;
+        Double c = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[2] : 0.280;
+        Double d = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[3] : 0.900;
+
+        Double σy = a * Math.pow(x, b);
+        Double σz = c * Math.pow(x, d);
+        Double σx = σy;
+        Double C = (Q / (Math.pow(2 * Math.PI, 3 / 2) * σx * σy * σz)) *
+                Math.exp(-(Math.pow(y, 2) / (2 * Math.pow(σy, 2)))) *
+                (Math.exp(-(Math.pow(z - h, 2) / (2 * Math.pow(σz, 2)))) +
+                        Math.exp(-(Math.pow(z + h, 2) / (2 * Math.pow(σz, 2))))
+                ) * Math.exp(-(Math.pow(x - u * t, 2) / Math.pow(2 * σx, 2)));
+
+        // 浓度值最大因子的level
+        int level = calLevel(C);
+        return level;
+    }
+
+    /**
+     * 计算因子level
+     *
+     * @param aa 因子浓度值
+     * @return
+     */
+    public int calLevel(double aa) {
+        // 扩散点浓度阈值
+        aa = aa * 1e3;
+        Double[] ge = new Double[]{1.5, 18D, 90D, 180D, 300D, 3e3};
+        int level = 0;
+        for (int r = 0; r < ge.length; r++) {
+            // 第一个阈值
+            if (0 == r) {
+                if (aa < ge[r + 1] && aa >= ge[r]) {
+                    level = r;
+                }
+            } else {
+                // 最后一个阈值
+                if (r == ge.length - 1) {
+                    if (aa >= ge[r]) {
+                        level = r;
+                    }
+                } else {
+                    if (aa < ge[r + 1] && aa >= ge[r]) {
+                        level = r;
+                    }
+                }
+            }
+        }
+        return level;
     }
 }

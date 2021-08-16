@@ -31,6 +31,11 @@ public class SpacePoint {
     private Double c;
 
     /**
+     * 浓度对应等级
+     */
+    private Integer level;
+
+    /**
      * 空间点坐标及其位置浓度
      *
      * @param point3D 空间坐标对象

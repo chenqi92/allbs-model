@@ -380,4 +380,35 @@ public class LngLatUtil {
         lat = Math.toDegrees(lat);
         return new Point3D(NumberUtil.round(lng, 6).doubleValue(), NumberUtil.round(lat, 6).doubleValue(), point3D.getZ());
     }
+
+    /**
+     * 求一点相对于另一点旋转一定角度后的坐标
+     *
+     * @param cenerPoint 中心点
+     * @param point      待旋转的点
+     * @param legel      旋转角度
+     * @return 坐标数组
+     */
+    public static Double[] route(Double[] cenerPoint, Double[] point, Double legel) {
+        final double cos = Math.cos(Math.PI * (360 - legel - 90) / 180);
+        Double x = (point[0] - cenerPoint[0]) * cos - (point[1] - cenerPoint[1]) * Math.sin(Math.PI * (360 - legel - 90) / 180) + cenerPoint[0];
+        Double y = (point[1] - cenerPoint[1]) * cos + (point[0] - cenerPoint[0]) * Math.sin(Math.PI * (360 - legel - 90) / 180) + cenerPoint[1];
+        Double[] result = new Double[]{x, y};
+        return result;
+    }
+
+    /**
+     * 偏移
+     * 依照墨卡托坐标计算
+     *
+     * @param pointMercator 点位
+     * @return 墨卡托坐标数组
+     */
+    public static Double[] deviation(Double[] pointMercator) {
+        // 地图中心点，墨卡托坐标
+        Double[] olxy = new Double[]{13053846.692025987, 3837666.68453955};
+        double x = olxy[0] + Math.ceil((pointMercator[0] - olxy[0]) / 20) * 20;
+        double y = olxy[1] + Math.ceil((pointMercator[1] - olxy[1]) / 20) * 20;
+        return new Double[]{x, y};
+    }
 }

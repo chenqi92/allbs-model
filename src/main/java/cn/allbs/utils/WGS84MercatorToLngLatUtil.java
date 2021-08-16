@@ -38,4 +38,36 @@ public class WGS84MercatorToLngLatUtil {
         y = y * 20037508.34 / 180;
         return new Point2D(x, y);
     }
+
+    /**
+     * 经纬度转平面坐标（墨卡托投影）
+     *
+     * @param lat 维度
+     * @param lng 经度
+     * @return 点位
+     */
+    public static Double[] lonLatToMercator(Double lat, Double lng) {
+        double x = (lng * 20037508.342789 / 180);
+        double y = (Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180));
+        y = y * 20037508.342789 / (double) 180;
+        Double[] point = new Double[]{x, y};
+        return point;
+    }
+
+    /**
+     * 墨卡托转经纬度
+     *
+     * @param X x
+     * @param Y y
+     * @return 经纬度数组
+     */
+    public static Double[] mercatorToLonLat(Double X, Double Y) {
+        double x = (X / 20037508.342789 * 180);
+        double y = (Y / 20037508.342789 * 180);
+        y = 180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / (double) 180)) - Math.PI / (double) 2);
+        Double[] lonlat = new Double[]{x, y};
+        return lonlat;
+    }
+
+
 }
