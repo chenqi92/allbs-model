@@ -220,4 +220,49 @@ public class SpaceGeometryUtil {
         }
         return batchPoints;
     }
+
+    /**
+     * 计算一个中心点之外所有点位
+     *
+     * @param xStep  x方向步长
+     * @param yStep  y方向步长
+     * @param zStep  z方向步长
+     * @param xLimit x向外延申得距离
+     * @param yLimit y向外延申得距离
+     * @param zLimit z向外延申得距离
+     * @param xCount 是否计算x负方向
+     * @param yCount 是否计算y负方向
+     * @param zCount 是否计算z负方向
+     * @return 中心点外所有点位列表
+     */
+    public Set<Point3D> takeAllPoints(double xStep, double yStep, double zStep, double xLimit, double yLimit, double zLimit, boolean xCount, boolean yCount, boolean zCount) {
+        if (xStep == 0 || yStep == 0 || zStep == 0) {
+            return new HashSet<>();
+        }
+        Point3D point3D = new Point3D(0, 0, 0);
+        Set<Point3D> point3DS = new HashSet<>();
+        Set<Double> xSet = new HashSet<>();
+        Set<Double> ySet = new HashSet<>();
+        Set<Double> zSet = new HashSet<>();
+        for (double x = 0; x <= xLimit; x += xStep) {
+            xSet.add(x);
+            if (xCount) {
+                xSet.add(-x);
+            }
+        }
+        for (double y = 0; y <= yLimit; y += yStep) {
+            ySet.add(y);
+            if (yCount) {
+                ySet.add(-y);
+            }
+        }
+        for (double z = 0; z <= zLimit; z += zStep) {
+            zSet.add(z);
+            if (zCount) {
+                zSet.add(-z);
+            }
+        }
+        zSet.forEach(z -> ySet.forEach(y -> xSet.forEach(x -> point3DS.add(point3D.add(x, y, z)))));
+        return point3DS;
+    }
 }

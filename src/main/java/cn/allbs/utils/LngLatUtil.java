@@ -391,8 +391,9 @@ public class LngLatUtil {
      */
     public static Double[] route(Double[] cenerPoint, Double[] point, Double legel) {
         final double cos = Math.cos(Math.PI * (360 - legel - 90) / 180);
-        Double x = (point[0] - cenerPoint[0]) * cos - (point[1] - cenerPoint[1]) * Math.sin(Math.PI * (360 - legel - 90) / 180) + cenerPoint[0];
-        Double y = (point[1] - cenerPoint[1]) * cos + (point[0] - cenerPoint[0]) * Math.sin(Math.PI * (360 - legel - 90) / 180) + cenerPoint[1];
+        final double sin = Math.sin(Math.PI * (360 - legel - 90) / 180);
+        Double x = (point[0] - cenerPoint[0]) * cos - (point[1] - cenerPoint[1]) * sin + cenerPoint[0];
+        Double y = (point[1] - cenerPoint[1]) * cos + (point[0] - cenerPoint[0]) * sin + cenerPoint[1];
         Double[] result = new Double[]{x, y};
         return result;
     }

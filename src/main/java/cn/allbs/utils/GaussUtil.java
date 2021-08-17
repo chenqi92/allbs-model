@@ -302,4 +302,34 @@ public class GaussUtil {
     public double liftingHeightOfSmokeCloud(double vs, double d, double ws) {
         return 2.4 * vs * d / ws;
     }
+
+    /**
+     * 烟羽扩散
+     *
+     * @param q 气载污染物源强，即释放率（mg/s）
+     * @param x 下风向距离（m）
+     * @param y 横截风向距离（m）
+     * @param z 距水平的高度（m）
+     * @param h 排口高度
+     * @param u 平均风速m/s
+     * @param t 时间s
+     * @return 等级
+     */
+    public Double calculate(Double q, Double x, Double y, Double z, Double h, Double u, int t) {
+        // 根据大气稳定度等级-获取扩散参数值
+        double a = 0.527;
+        double b = 0.865;
+        double c = 0.280;
+        double d = 0.900;
+
+        Double sigmaY = a * Math.pow(x, b);
+        Double sigmaZ = c * Math.pow(x, d);
+        Double sigmaX = sigmaY;
+
+        return (q / (Math.pow(2 * Math.PI, 3 / (float) 2) * sigmaX * sigmaY * sigmaZ)) *
+                Math.exp(-(Math.pow(y, 2) / (2 * Math.pow(sigmaY, 2)))) *
+                (Math.exp(-(Math.pow(z - h, 2) / (2 * Math.pow(sigmaZ, 2)))) +
+                        Math.exp(-(Math.pow(z + h, 2) / (2 * Math.pow(sigmaZ, 2))))
+                ) * Math.exp(-(Math.pow(x - u * t, 2) / Math.pow(2 * sigmaX, 2)));
+    }
 }

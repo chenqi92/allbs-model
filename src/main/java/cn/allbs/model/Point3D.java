@@ -2,6 +2,7 @@ package cn.allbs.model;
 
 import javafx.beans.NamedArg;
 
+
 /**
  * 空间三维坐标
  *

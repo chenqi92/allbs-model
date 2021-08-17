@@ -4,11 +4,14 @@ import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -340,83 +343,6 @@ public class ModelUtil {
     }
 
     /**
-     * 不带入扩散系数计算高斯烟羽模型
-     *
-     * @param q    物料连续泄漏的质量流量，单位kg/s
-     * @param ce   平均风速m/s
-     * @param h    泄露源源高
-     * @param se   风向角度
-     * @param step 步长
-     * @param z    水平高度
-     * @return 空间点中气体浓度
-     */
-    public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Integer step, Double z) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        // 数据校验
-        if (se > 360 || se < 0) {
-            return null;
-        }
-        if (ce == null || ce < 0) {
-            return null;
-        }
-
-        // 扩散原点
-        Double[] originMercator = {0D, 0D};
-
-        // 计算扩散区域上半部分
-        aa:
-        for (int a = 0; a <= 10000; a += step) {
-            // x方向增值
-            Double ne = Convert.toDouble(a);
-            bb:
-            for (int o = 0; o <= 2000; o += step) {
-                // y方向增值
-                Double ie = Convert.toDouble(o);
-                Double currPoint = calculate(q, ne, ie, z, h, ce, (double) 0);
-                if (currPoint <= 0) {
-                    break bb;
-                }
-
-                // 边界经纬度list加上一个经纬度点
-                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
-                // 旋转
-                Double[] spreadRotateLnglat = LngLatUtil.route(originMercator, spreadMercator, se);
-                Map<String, Object> levLngLatMap = new HashMap<>();
-                levLngLatMap.put("value", currPoint);
-                levLngLatMap.put("x", spreadRotateLnglat[0]);
-                levLngLatMap.put("y", spreadRotateLnglat[1]);
-                levLngLatMap.put("z", z);
-                result.add(levLngLatMap);
-            }
-        }
-
-        // 计算扩散区域下半部分，同上
-        cc:
-        for (int a = 0; a <= 10000; a += step) {
-            Double ne = Convert.toDouble(a);
-            dd:
-            for (int o = -step; o >= -4000; o -= step) {
-                Double ie = Convert.toDouble(o);
-                Double currPoint = calculate(q, ne, ie, z, h, ce, Double.valueOf(0));
-                if (currPoint <= 0) {
-                    break dd;
-                }
-                // 边界经纬度list加上一个经纬度点
-                Double[] spreadMercator = new Double[]{originMercator[0] + ne, originMercator[1] + ie};
-                // 旋转
-                Double[] spreadRotateLnglat = LngLatUtil.route(originMercator, spreadMercator, se);
-                Map<String, Object> levLngLatMap = new HashMap<>();
-                levLngLatMap.put("value", currPoint);
-                levLngLatMap.put("x", spreadRotateLnglat[0]);
-                levLngLatMap.put("y", spreadRotateLnglat[1]);
-                levLngLatMap.put("z", z);
-                result.add(0, levLngLatMap);
-            }
-        }
-        return result;
-    }
-
-    /**
      * @param q              物料连续泄漏的质量流量，单位kg/s
      * @param ue             扩散原点经纬度坐标
      * @param originMercator 扩散原点墨卡托坐标
@@ -471,37 +397,6 @@ public class ModelUtil {
     }
 
     /**
-     * 烟羽扩散
-     *
-     * @param Q 气载污染物源强，即释放率（mg/s）
-     * @param x 下风向距离（m）
-     * @param y 横截风向距离（m）
-     * @param z 距水平的高度（m）
-     * @param h 排口高度
-     * @param u 平均风速m/s
-     * @param t 时间s
-     * @return 等级
-     */
-    public Double calculate(Double Q, Double x, Double y, Double z, Double h, Double u, Double t) {
-        // 根据大气稳定度等级-获取扩散参数值
-        Double a = 0.527;
-        Double b = 0.865;
-        Double c = 0.280;
-        Double d = 0.900;
-
-        Double σy = a * Math.pow(x, b);
-        Double σz = c * Math.pow(x, d);
-        Double σx = σy;
-        Double C = (Q / (Math.pow(2 * Math.PI, 3 / (float) 2) * σx * σy * σz)) *
-                Math.exp(-(Math.pow(y, 2) / (2 * Math.pow(σy, 2)))) *
-                (Math.exp(-(Math.pow(z - h, 2) / (2 * Math.pow(σz, 2)))) +
-                        Math.exp(-(Math.pow(z + h, 2) / (2 * Math.pow(σz, 2))))
-                ) * Math.exp(-(Math.pow(x - u * t, 2) / Math.pow(2 * σx, 2)));
-
-        return C;
-    }
-
-    /**
      * 计算因子level
      *
      * @param aa 因子浓度值
@@ -532,5 +427,60 @@ public class ModelUtil {
             }
         }
         return level;
+    }
+
+    /**
+     * 不带入扩散系数计算高斯烟羽模型
+     *
+     * @param q     物料连续泄漏的质量流量，单位kg/s
+     * @param u     平均风速m/s
+     * @param h     泄露源源高
+     * @param angle 风向角度
+     * @param lng   起火中心点经度
+     * @param lat   起火中心点纬度
+     * @return 空间点中气体浓度
+     */
+    public Set<Map<String, Object>> gaussPlumeWithoutFactorInCesium(double q, double u, double angle, double h, double lng, double lat, int t, double xStep, double yStep, double zStep, double xLimit, double yLimit, double zLimit) {
+        final double cos = Math.cos(Math.PI * (360 - angle - 90) / 180);
+        final double sin = Math.sin(Math.PI * (360 - angle - 90) / 180);
+        // 获取所有坐标点
+        Set<Point3D> point3DS = SpaceGeometryUtil.takeAllPoints(xStep, yStep, zStep, xLimit, yLimit, zLimit, false, true, true);
+        // 获取墨卡托坐标点
+        Double[] mercator = WGS84MercatorToLngLatUtil.lonLatToMercator(lat, lng);
+        Double[] mercatorPoint = {0D, 0 - yLimit};
+        // 东北角坐标
+        Double[] dbPoint = {mercator[0], mercator[1] + yLimit};
+        Set<Map<String, Object>> points = new HashSet<>();
+        point3DS.forEach(a -> {
+            double x = Math.max(a.getX() - u * t, xStep);
+            Double gaussValue = GaussUtil.highPowerContinuousDiffusion(q, u, h, x, a.getY(), a.getZ(), t);
+            if (!ObjectUtil.isValidIfNumber(gaussValue)) {
+                return;
+            }
+            BigDecimal value = NumberUtil.round(gaussValue, 5);
+            if (value.compareTo(new BigDecimal(0)) == 0) {
+                return;
+            }
+            Map<String, Object> pointMap = new HashMap<>();
+            // 偏移角度
+            Double pointX = a.getX() + mercator[0] - dbPoint[0];
+            Double pointY = a.getY() + mercator[1] - dbPoint[1];
+            pointMap.put("x", (pointX - mercatorPoint[0]) * cos - (pointY - mercatorPoint[1]) * sin + mercatorPoint[0]);
+            pointMap.put("y", (pointY - mercatorPoint[1]) * cos + (pointX - mercatorPoint[0]) * sin + mercatorPoint[1]);
+            pointMap.put("value", value);
+            System.out.println(pointMap);
+            points.add(pointMap);
+        });
+        return points;
+    }
+
+    public static void main(String[] args) {
+        TimeInterval timer = DateUtil.timer();
+        System.out.println(gaussPlumeWithoutFactorInCesium(30, 2.3, 60, 20, 118.863301, 37.415021, 1, 10, 10, 10, 1000, 400, 0));
+//        System.out.println(gaussPlumeWithoutFactor(100D, 1D, 0D, 10D, new Double[]{118.863301, 37.415021}, 10, 30D));
+//        int x = 10;
+//        x = Math.max((x - 10 * 2), x);
+//        System.out.println(GaussUtil.highPowerContinuousDiffusion(30D, 2.3, 10, 500, -1500, 100, 2));
+        System.out.println("执行时间:" + timer.interval());
     }
 }

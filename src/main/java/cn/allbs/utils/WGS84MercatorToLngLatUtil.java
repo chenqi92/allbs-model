@@ -50,8 +50,7 @@ public class WGS84MercatorToLngLatUtil {
         double x = (lng * 20037508.342789 / 180);
         double y = (Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180));
         y = y * 20037508.342789 / (double) 180;
-        Double[] point = new Double[]{x, y};
-        return point;
+        return new Double[]{x, y};
     }
 
     /**
@@ -65,9 +64,6 @@ public class WGS84MercatorToLngLatUtil {
         double x = (X / 20037508.342789 * 180);
         double y = (Y / 20037508.342789 * 180);
         y = 180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / (double) 180)) - Math.PI / (double) 2);
-        Double[] lonlat = new Double[]{x, y};
-        return lonlat;
+        return new Double[]{x, y};
     }
-
-
 }
