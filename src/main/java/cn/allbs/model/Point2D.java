@@ -1,7 +1,5 @@
 package cn.allbs.model;
 
-import javafx.beans.NamedArg;
-
 /**
  * A 2D geometric point that usually represents the x, y coordinates. It can also represent a relative magnitude vector's x, y magnitudes.
  *
@@ -57,7 +55,7 @@ public class Point2D {
      * @param x the x coordinate of the point
      * @param y the y coordinate of the point
      */
-    public Point2D(@NamedArg("x") double x, @NamedArg("y") double y) {
+    public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
     }

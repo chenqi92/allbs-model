@@ -1,7 +1,5 @@
 package cn.allbs.model;
 
-import javafx.beans.NamedArg;
-
 
 /**
  * 空间三维坐标
@@ -102,7 +100,7 @@ public class Point3D {
      * @param y The Y coordinate of the {@code Point3D}
      * @param z The Z coordinate of the {@code Point3D}
      */
-    public Point3D(@NamedArg("x") double x, @NamedArg("y") double y, @NamedArg("z") double z) {
+    public Point3D(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;

@@ -4,8 +4,6 @@ import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -472,15 +470,5 @@ public class ModelUtil {
             points.add(pointMap);
         });
         return points;
-    }
-
-    public static void main(String[] args) {
-        TimeInterval timer = DateUtil.timer();
-        System.out.println(gaussPlumeWithoutFactorInCesium(30, 2.3, 60, 20, 118.863301, 37.415021, 1, 10, 10, 10, 1000, 400, 0));
-//        System.out.println(gaussPlumeWithoutFactor(100D, 1D, 0D, 10D, new Double[]{118.863301, 37.415021}, 10, 30D));
-//        int x = 10;
-//        x = Math.max((x - 10 * 2), x);
-//        System.out.println(GaussUtil.highPowerContinuousDiffusion(30D, 2.3, 10, 500, -1500, 100, 2));
-        System.out.println("执行时间:" + timer.interval());
     }
 }
