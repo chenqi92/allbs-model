@@ -54,6 +54,7 @@ public class MultiLineAlarmParser extends AbstractParser {
         short[] s = countDiskAndLine(part);
         this.dataMap.put(DISK.getName(), s[0]);
         this.dataMap.put(LINE.getName(), s[1]);
+        this.dataMap.put(PART.getName(), part);
     }
 
     /**

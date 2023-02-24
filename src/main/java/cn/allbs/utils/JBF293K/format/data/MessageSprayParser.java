@@ -57,6 +57,7 @@ public class MessageSprayParser extends AbstractParser {
         short[] s = countDiskAndDistrict(part);
         this.dataMap.put(DISK.getName(), s[0]);
         this.dataMap.put(DISTRICT.getName(), s[1]);
+        this.dataMap.put(PART.getName(), part);
     }
 
     /**
