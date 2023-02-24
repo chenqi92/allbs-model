@@ -9,6 +9,7 @@ import cn.allbs.utils.JBF293K.enums.AlarmEnum;
 import cn.allbs.utils.JBF293K.enums.FireAndEleEnum;
 import cn.allbs.utils.JBF293K.enums.SprayEnum;
 import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.utils.JBF293K.feature.VerifyFeature;
 import cn.allbs.utils.JBF293K.format.data.AbstractParser;
 import cn.allbs.utils.JBF293K.utils.VerifyUtil;
 
@@ -33,6 +34,8 @@ public class JBF293KParser implements Configured<JBF293KParser>, Closeable {
     protected byte[] msgBytes;
 
     private int count;
+
+    private int verifyFeature;
 
     public JBF293KParser(byte[] msgBytes) {
         this.msgBytes = msgBytes;
@@ -76,7 +79,7 @@ public class JBF293KParser implements Configured<JBF293KParser>, Closeable {
             order[i] = dataOutputStream.readByte();
         }
         // 取每个字节的低四位构成十进制整数
-        return AsciiUtil.bytesToByte(order);
+        return AsciiUtil.bytesToShort(order, 0x30);
     }
 
     /**
@@ -113,37 +116,35 @@ public class JBF293KParser implements Configured<JBF293KParser>, Closeable {
 
     /**
      * 校验
-     *
-     * @return 校验结果
      */
-    public boolean readCheck(short summation) throws IOException, JBF293KException {
+    public void readCheck(short summation) throws IOException, JBF293KException {
         byte[] crc = new byte[ACCUMULATE_SUM.getLen()];
         count = crc.length;
         for (int i = 0; i < count; i++) {
             crc[i] = dataOutputStream.readByte();
         }
-        short crcNum = AsciiUtil.bytesToByte(crc);
-        VerifyUtil.verifyCheck(summation != crcNum);
-        return true;
+        short crcNum = AsciiUtil.bytesToShort(crc, 0x30);
+        if (VerifyFeature.SUMMATION.enabledIn(verifyFeature)) {
+            VerifyUtil.verifyCheck(summation != crcNum);
+        }
     }
 
     /**
      * Crc校验
-     *
-     * @return 校验结果
      */
-    public boolean readCheckCrc(int... bytes) throws IOException, JBF293KException {
+    public void readCheckCrc(int... bytes) throws IOException, JBF293KException {
         byte[] crc = new byte[CRC.getLen()];
         count = crc.length;
         for (int i = 0; i < count; i++) {
             crc[i] = dataOutputStream.readByte();
         }
-        short crcNum = AsciiUtil.bytesToByte(crc);
+        short crcNum = AsciiUtil.bytesToShort(crc, 0x30);
         Crc8MAXIM checkCrc = Crc8MAXIM.getInstance();
 
         short checkCrcNum = (short) checkCrc.compute(bytes);
-        VerifyUtil.verifyCheck(crcNum != checkCrcNum);
-        return true;
+        if (VerifyFeature.DATA_CRC.enabledIn(verifyFeature)) {
+            VerifyUtil.verifyCheck(crcNum != checkCrcNum);
+        }
     }
 
     /**

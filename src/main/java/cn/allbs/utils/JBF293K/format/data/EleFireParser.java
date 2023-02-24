@@ -94,7 +94,7 @@ public class EleFireParser extends AbstractParser {
         for (int i = 0; i < ACCUMULATE_SUM.getLen(); i++) {
             crc[i] = dataOutputStream.readByte();
         }
-        short crcNum = AsciiUtil.bytesToByte(crc);
+        short crcNum = AsciiUtil.bytesToShort(crc, 0x30);
         VerifyUtil.verifyCheck(getSummation() != crcNum);
         addSummation(crcNum);
     }

@@ -5,11 +5,20 @@
 <dependency>
   <groupId>cn.allbs</groupId>
   <artifactId>allbs-model</artifactId>
-  <version>0.3.1</version>
+  <version>0.4</version>
 </dependency>
 ```
 
 ## 工具类
+### JBF293K报文解析
+```java
+JBF293KMapper jbf293KMapper = new JBF293KMapper();
+System.out.println(jbf293KMapper.readValue(bytes, Map.class));
+```
+#### 解析示例
+![image-20230223134717092](https://nas.allbs.cn:9006/cloudpic/2023/02/144504d4725cbbc6bdd78e2dfa3e9ed8.png)
+![image-20230223142712393](https://nas.allbs.cn:9006/cloudpic/2023/02/f273b83c4bae709c7ba4c606dcc6725c.png)
+![image-20230223154854847](https://nas.allbs.cn:9006/cloudpic/2023/02/9bc4dda82d26129c592d105a6edace38.png)
 
 ### 大气aqi计算类 AqiUtil
 #### 计算实时/日的AQI数据 countRealAqi

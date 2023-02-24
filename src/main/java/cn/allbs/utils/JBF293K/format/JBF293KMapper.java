@@ -1,6 +1,8 @@
 package cn.allbs.utils.JBF293K.format;
 
 import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.utils.JBF293K.feature.Feature;
+import cn.allbs.utils.JBF293K.feature.VerifyFeature;
 import cn.allbs.utils.JBF293K.format.der.JBF293KDeserializer;
 
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class JBF293KMapper {
 
     private static JBF293KFactory jbf293KFactory;
 
+    private int verifyFeatures;
+
     static {
         try {
             jbf293KFactory = new JBF293KFactory();
@@ -32,6 +36,21 @@ public class JBF293KMapper {
 
     public JBF293KMapper() {
         this.factory = jbf293KFactory.copy();
+    }
+
+    public JBF293KMapper enableDefaultVerifyFeatures() {
+        verifyFeatures = verifyFeatures | Feature.collectFeatureDefaults(VerifyFeature.class);
+        return this;
+    }
+
+    public JBF293KMapper enable(VerifyFeature feature) {
+        verifyFeatures = verifyFeatures | feature.getMask();
+        return this;
+    }
+
+    public JBF293KMapper disable(VerifyFeature feature) {
+        verifyFeatures = verifyFeatures & ~feature.getMask();
+        return this;
     }
 
     public <T> T readValue(byte[] msg, Class<T> value) throws IOException, JBF293KException {

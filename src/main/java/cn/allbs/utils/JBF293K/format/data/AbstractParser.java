@@ -264,7 +264,7 @@ public abstract class AbstractParser implements IParser, Configured<AbstractPars
         for (int i = 0; i < len; i++) {
             b[i] = dataOutputStream.readByte();
         }
-        short castNum = AsciiUtil.bytesToByte(b);
+        short castNum = AsciiUtil.bytesToShort(b, 0x30);
         // 校验和增加
         addSummation(castNum);
         return castNum;

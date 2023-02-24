@@ -403,4 +403,30 @@ public class AsciiUtil {
     public static short bytesToByte(byte[] bytes) {
         return bytesToByte(bytes, ByteOrder.LITTLE_ENDIAN);
     }
+
+    /**
+     * 两个16进制的字节转换为1个字节10进制整数（用于GBF293K）
+     *
+     * @return 转换后的一个字节整数
+     */
+    public static short bytesToShort(byte[] bytes, ByteOrder byteOrder, int shift) {
+        if (bytes.length == 1) {
+            return (short) (bytes[0] & 0xff);
+        }
+        if (ByteOrder.LITTLE_ENDIAN == byteOrder) {
+            //小端模式，数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
+            return (short) (getLow4FromShort((short) (bytes[0] - shift)) << 4 | getLow4FromShort((short) (bytes[1] - shift)));
+        } else {
+            return (short) (getLow4FromShort((short) (bytes[1] - shift)) << 4 | getLow4FromShort((short) (bytes[0] - shift)));
+        }
+    }
+
+    /**
+     * 两个16进制的字节转换为1个字节10进制整数（用于GBF293K）
+     *
+     * @return 转换后的一个字节整数
+     */
+    public static short bytesToShort(byte[] bytes, int shift) {
+        return bytesToShort(bytes, ByteOrder.LITTLE_ENDIAN, shift);
+    }
 }
