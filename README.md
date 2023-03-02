@@ -5,7 +5,7 @@
 <dependency>
   <groupId>cn.allbs</groupId>
   <artifactId>allbs-model</artifactId>
-  <version>0.4</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
@@ -19,6 +19,13 @@ System.out.println(jbf293KMapper.readValue(bytes, Map.class));
 ![image-20230223134717092](https://nas.allbs.cn:9006/cloudpic/2023/02/144504d4725cbbc6bdd78e2dfa3e9ed8.png)
 ![image-20230223142712393](https://nas.allbs.cn:9006/cloudpic/2023/02/f273b83c4bae709c7ba4c606dcc6725c.png)
 ![image-20230223154854847](https://nas.allbs.cn:9006/cloudpic/2023/02/9bc4dda82d26129c592d105a6edace38.png)
+
+### GB26875报文解析
+```java
+GB26875Mapper gb26875Mapper = new GB26875Mapper();
+Map<String, Object> map = gb26875Mapper.readValue(bytes, Map.class);
+```
+![image-20230302092553966](https://nas.allbs.cn:9006/cloudpic/2023/03/4d19de823782d9f6f66ea330aecf81a6.png)
 
 ### 大气aqi计算类 AqiUtil
 #### 计算实时/日的AQI数据 countRealAqi
