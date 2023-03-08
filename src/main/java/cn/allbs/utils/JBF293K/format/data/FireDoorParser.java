@@ -3,13 +3,12 @@ package cn.allbs.utils.JBF293K.format.data;
 import cn.allbs.utils.AsciiUtil;
 import cn.allbs.utils.JBF293K.enums.FireDoorsStatusEnum;
 import cn.allbs.utils.JBF293K.enums.FireDoorsTypeEnum;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.allbs.utils.JBF293K.PacketElement.D4;
-import static cn.allbs.utils.JBF293K.PacketElement.D5;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.D5;
 import static cn.allbs.utils.JBF293K.enums.KeyWordEnums.*;
 
 /**

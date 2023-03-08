@@ -1,4 +1,4 @@
-package cn.allbs.utils.JBF293K.feature;
+package cn.allbs.feature;
 
 /**
  * 枚举 VerifyFeature

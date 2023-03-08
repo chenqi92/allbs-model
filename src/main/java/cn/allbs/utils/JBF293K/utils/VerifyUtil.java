@@ -1,6 +1,6 @@
 package cn.allbs.utils.JBF293K.utils;
 
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 import lombok.experimental.UtilityClass;
 
 import java.util.Arrays;

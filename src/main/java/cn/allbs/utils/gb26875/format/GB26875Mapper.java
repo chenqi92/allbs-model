@@ -1,6 +1,6 @@
 package cn.allbs.utils.gb26875.format;
 
-import cn.allbs.utils.gb26875.exception.GB26875Exception;
+import cn.allbs.exception.GB26875Exception;
 import cn.allbs.utils.gb26875.format.der.GB26875Deserializer;
 
 import java.io.IOException;

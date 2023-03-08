@@ -3,7 +3,7 @@ package cn.allbs.utils.JBF293K.format.data;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.allbs.utils.JBF293K.PacketElement.*;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.*;
 import static cn.allbs.utils.JBF293K.enums.KeyWordEnums.*;
 
 /**

@@ -1,4 +1,4 @@
-package cn.allbs.utils.gb26875.core;
+package cn.allbs.core;
 
 /**
  * 目标配置类

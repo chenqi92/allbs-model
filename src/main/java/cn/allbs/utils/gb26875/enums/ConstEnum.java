@@ -1,6 +1,5 @@
 package cn.allbs.utils.gb26875.enums;
 
-import cn.allbs.utils.gb26875.utils.PacketElement;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

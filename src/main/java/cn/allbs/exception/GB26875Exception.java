@@ -1,4 +1,4 @@
-package cn.allbs.utils.gb26875.exception;
+package cn.allbs.exception;
 
 /**
  * 消防检测协议转换异常

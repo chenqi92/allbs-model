@@ -1,7 +1,7 @@
 package cn.allbs.utils.gb26875.format.data;
 
-import cn.allbs.utils.gb26875.core.Configurator;
-import cn.allbs.utils.gb26875.core.Configured;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;

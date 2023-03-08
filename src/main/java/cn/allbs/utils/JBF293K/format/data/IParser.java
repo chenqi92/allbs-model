@@ -1,6 +1,6 @@
 package cn.allbs.utils.JBF293K.format.data;
 
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 
 import java.io.IOException;
 import java.util.Map;

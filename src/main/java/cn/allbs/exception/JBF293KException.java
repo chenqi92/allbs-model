@@ -1,4 +1,4 @@
-package cn.allbs.utils.JBF293K.exception;
+package cn.allbs.exception;
 
 /**
  * 类 GB293KException

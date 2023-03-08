@@ -1,4 +1,4 @@
-package cn.allbs.utils.gb26875.utils;
+package cn.allbs.utils.gb26875.enums;
 
 /**
  * @author ChenQi

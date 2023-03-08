@@ -1,6 +1,6 @@
 package cn.allbs.utils.JBF293K.format.der;
 
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 import cn.allbs.utils.JBF293K.format.JBF293KParser;
 
 import java.io.IOException;

@@ -1,8 +1,8 @@
 package cn.allbs.utils.JBF293K.format;
 
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
-import cn.allbs.utils.JBF293K.feature.Feature;
-import cn.allbs.utils.JBF293K.feature.VerifyFeature;
+import cn.allbs.exception.JBF293KException;
+import cn.allbs.feature.Feature;
+import cn.allbs.feature.VerifyFeature;
 import cn.allbs.utils.JBF293K.format.der.JBF293KDeserializer;
 
 import java.io.IOException;

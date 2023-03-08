@@ -1,4 +1,4 @@
-package cn.allbs.utils.JBF293K;
+package cn.allbs.utils.JBF293K.enums;
 
 /**
  * 类 PacketElement

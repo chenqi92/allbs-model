@@ -3,12 +3,12 @@ package cn.allbs.utils.gb26875.format;
 
 import cn.allbs.constant.StringPoolConstant;
 import cn.allbs.utils.AsciiUtil;
-import cn.allbs.utils.gb26875.core.Configurator;
-import cn.allbs.utils.gb26875.core.Configured;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
 import cn.allbs.utils.gb26875.enums.TypeEnums;
-import cn.allbs.utils.gb26875.exception.GB26875Exception;
+import cn.allbs.exception.GB26875Exception;
 import cn.allbs.utils.gb26875.format.data.AbstractParser;
-import cn.allbs.utils.gb26875.utils.PacketElement;
+import cn.allbs.utils.gb26875.enums.PacketElement;
 import cn.allbs.utils.gb26875.utils.VerifyUtil;
 
 import java.io.ByteArrayInputStream;

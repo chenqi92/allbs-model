@@ -1,8 +1,8 @@
 package cn.allbs.utils.JBF293K.format;
 
-import cn.allbs.utils.JBF293K.core.Configurator;
-import cn.allbs.utils.JBF293K.core.Configured;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
+import cn.allbs.exception.JBF293KException;
 import cn.allbs.utils.JBF293K.format.data.AbstractParser;
 import cn.allbs.utils.JBF293K.format.der.JBF293KDeserializer;
 

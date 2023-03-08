@@ -1,10 +1,10 @@
 package cn.allbs.utils.JBF293K.format.data;
 
 import cn.allbs.utils.AsciiUtil;
-import cn.allbs.utils.JBF293K.core.Configurator;
-import cn.allbs.utils.JBF293K.core.Configured;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
 import cn.allbs.utils.JBF293K.enums.KeyWordEnums;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 import cn.hutool.core.date.DatePattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.allbs.utils.JBF293K.PacketElement.*;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.*;
 
 /**
  * 类 AbstractParser

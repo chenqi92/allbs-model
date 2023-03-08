@@ -1,9 +1,9 @@
 package cn.allbs.utils.gb26875.format;
 
-import cn.allbs.utils.gb26875.core.Configurator;
-import cn.allbs.utils.gb26875.core.Configured;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
 import cn.allbs.utils.gb26875.enums.ControlUnitEnum;
-import cn.allbs.utils.gb26875.exception.GB26875Exception;
+import cn.allbs.exception.GB26875Exception;
 import cn.allbs.utils.gb26875.format.der.GB26875Deserializer;
 
 import java.io.IOException;

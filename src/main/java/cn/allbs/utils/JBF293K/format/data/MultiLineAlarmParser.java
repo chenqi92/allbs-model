@@ -1,12 +1,12 @@
 package cn.allbs.utils.JBF293K.format.data;
 
 import cn.allbs.utils.JBF293K.enums.AlarmEnum;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.allbs.utils.JBF293K.PacketElement.*;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.*;
 import static cn.allbs.utils.JBF293K.enums.KeyWordEnums.*;
 
 /**

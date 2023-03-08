@@ -6,7 +6,7 @@ import cn.allbs.utils.JBF293K.enums.KeyWordEnums;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.allbs.utils.JBF293K.PacketElement.*;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.*;
 
 /**
  * 类 VersionParser

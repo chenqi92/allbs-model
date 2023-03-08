@@ -2,14 +2,14 @@ package cn.allbs.utils.JBF293K.format;
 
 import cn.allbs.utils.AsciiUtil;
 import cn.allbs.utils.Crc8MAXIM;
-import cn.allbs.utils.JBF293K.PacketElement;
-import cn.allbs.utils.JBF293K.core.Configurator;
-import cn.allbs.utils.JBF293K.core.Configured;
+import cn.allbs.utils.JBF293K.enums.PacketElement;
+import cn.allbs.core.Configurator;
+import cn.allbs.core.Configured;
 import cn.allbs.utils.JBF293K.enums.AlarmEnum;
 import cn.allbs.utils.JBF293K.enums.FireAndEleEnum;
 import cn.allbs.utils.JBF293K.enums.SprayEnum;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
-import cn.allbs.utils.JBF293K.feature.VerifyFeature;
+import cn.allbs.exception.JBF293KException;
+import cn.allbs.feature.VerifyFeature;
 import cn.allbs.utils.JBF293K.format.data.AbstractParser;
 import cn.allbs.utils.JBF293K.utils.VerifyUtil;
 

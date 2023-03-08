@@ -1,6 +1,6 @@
 package cn.allbs.utils.gb26875.utils;
 
-import cn.allbs.utils.gb26875.exception.GB26875Exception;
+import cn.allbs.exception.GB26875Exception;
 import lombok.experimental.UtilityClass;
 
 import java.util.Arrays;

@@ -3,13 +3,13 @@ package cn.allbs.utils.JBF293K.format.data;
 import cn.allbs.utils.AsciiUtil;
 import cn.allbs.utils.JBF293K.enums.EleFireStatusEnum;
 import cn.allbs.utils.JBF293K.enums.EleFireTypeEnum;
-import cn.allbs.utils.JBF293K.exception.JBF293KException;
+import cn.allbs.exception.JBF293KException;
 import cn.allbs.utils.JBF293K.utils.VerifyUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.allbs.utils.JBF293K.PacketElement.*;
+import static cn.allbs.utils.JBF293K.enums.PacketElement.*;
 import static cn.allbs.utils.JBF293K.enums.KeyWordEnums.*;
 
 /**
