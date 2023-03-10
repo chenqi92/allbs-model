@@ -27,6 +27,83 @@ Map<String, Object> map = gb26875Mapper.readValue(bytes, Map.class);
 ```
 ![image-20230302092553966](https://nas.allbs.cn:9006/cloudpic/2023/03/4d19de823782d9f6f66ea330aecf81a6.png)
 
+### SFJK200 报文生成&解析
+#### 生成
+```java
+Map<String, Object> map = new HashMap<>(4);
+// 地址
+map.put(ADDRESS.getName(), 1);
+// 功能码
+map.put(FUNCTION.getName(), 3);
+// 起始寄存器地址
+map.put(START_ADDRESS.getName(), 0);
+// 读寄存器数量
+map.put(READ_ADDRESS.getName(), 2);
+SFJK200Mapper sfjk200Mapper = new SFJK200Mapper();
+byte[] bytes = sfjk200Mapper.writeDataAsByteArray(map);
+```
+
+
+![image-20230310143214803](https://nas.allbs.cn:9006/cloudpic/2023/03/c44cbd682ffce4183dc39b3b3a497e0f.png)
+
+#### 解析
+
+![image-20230309162532082](https://nas.allbs.cn:9006/cloudpic/2023/03/a87785f0dbbf9982d772b17288bc9b85.png)
+
+```java
+byte[] bytes = new byte[9];
+bytes[0] = 0x01;
+bytes[1] = 0x03;
+bytes[2] = 0x04;
+bytes[3] = 0x3F;
+bytes[4] = 0x00;
+bytes[5] = 0x00;
+bytes[6] = 0x00;
+bytes[7] = (byte) 0xf6;
+bytes[8] = 0x27;
+SFJK200Mapper sfjk200Mapper = new SFJK200Mapper();
+System.out.println(sfjk200Mapper.readValue(bytes, 0x0000, Map.class));
+```
+
+![image-20230309162610293](https://nas.allbs.cn:9006/cloudpic/2023/03/2cf95a3b15b3e3bcfb700fa9f6f2f2b5.png)
+
+![image-20230310103906086](https://nas.allbs.cn:9006/cloudpic/2023/03/f5dd835057b1134f52ca6f4db6faf43b.png)
+
+![image-20230310103915347](https://nas.allbs.cn:9006/cloudpic/2023/03/b919dcc2cd6d419957d795acb4a4ec80.png)
+
+```java
+byte[] bytes = new byte[13];
+bytes[0] = (byte) 0x01;
+bytes[1] = (byte) 0x03;
+bytes[2] = (byte) 0x08;
+
+bytes[3] = (byte) 0x00;
+bytes[4] = (byte) 0x64;
+bytes[5] = (byte) 0x00;
+bytes[6] = (byte) 0x96;
+
+bytes[7] = (byte) 0x01;
+bytes[8] = (byte) 0x40;
+bytes[9] = (byte) 0x00;
+bytes[10] = (byte) 0xD1;
+bytes[11] = (byte) 0x38;
+bytes[12] = (byte) 0x78;
+
+SFJK200Mapper sfjk200Mapper = new SFJK200Mapper();
+Map<String, Object> map = sfjk200Mapper.readValue(bytes, 0x03E4, Map.class);
+map.forEach((k, v) -> {
+    if (k.equals("data")) {
+        List<Map<String, Object>> list = (List<Map<String, Object>>) v;
+        list.forEach(System.out::println);
+    } else {
+        System.out.println(k + ":" + v);
+    }
+});
+```
+
+![image-20230310104125705](https://nas.allbs.cn:9006/cloudpic/2023/03/5ec825a0f4da6d491585985723e55478.png)
+
+
 ### 大气aqi计算类 AqiUtil
 #### 计算实时/日的AQI数据 countRealAqi
 ```
