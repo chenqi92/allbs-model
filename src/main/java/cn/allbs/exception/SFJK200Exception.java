@@ -60,6 +60,10 @@ public class SFJK200Exception extends Exception {
         throw new SFJK200Exception("Arithmetic Verification failed: " + new String(msg) + ": " + Integer.toHexString(crc));
     }
 
+    public static void crc_verification_failed(Enum<?> flag, byte[] msg, int crc) throws SFJK200Exception {
+        throw new SFJK200Exception("Crc Verification failed: " + new String(msg) + ": " + Integer.toHexString(crc));
+    }
+
     public Object getResult() {
         return result;
     }

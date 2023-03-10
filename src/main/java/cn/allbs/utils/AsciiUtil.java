@@ -1,6 +1,7 @@
 package cn.allbs.utils;
 
 import cn.allbs.constant.StringPoolConstant;
+import cn.hutool.core.convert.Convert;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -308,29 +309,6 @@ public class AsciiUtil {
     }
 
     /**
-     * byte数组转short<br>
-     * 默认以小端序转换
-     *
-     * @param bytes byte数组
-     * @return short值
-     */
-    public static short bytesToShort(byte[] bytes) {
-        return bytesToShort(bytes, ByteOrder.LITTLE_ENDIAN);
-    }
-
-    /**
-     * 16进制字节数组转为short
-     */
-    public static short bytesToShort(byte[] bytes, ByteOrder byteOrder) {
-        if (ByteOrder.LITTLE_ENDIAN == byteOrder) {
-            //小端模式，数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
-            return (short) (bytes[0] & 0xff | (bytes[1] & 0xff) << Byte.SIZE);
-        } else {
-            return (short) (bytes[1] & 0xff | (bytes[0] & 0xff) << Byte.SIZE);
-        }
-    }
-
-    /**
      * 获取一个字节整数高四位
      *
      * @param data 一个字节的数
@@ -383,7 +361,7 @@ public class AsciiUtil {
      *
      * @return 转换后的一个字节整数
      */
-    public static short bytesToByte(byte[] bytes, ByteOrder byteOrder) {
+    public static short bytesToShort(byte[] bytes, ByteOrder byteOrder) {
         if (bytes.length == 1) {
             return (short) (bytes[0] & 0xff);
         }
@@ -400,8 +378,8 @@ public class AsciiUtil {
      *
      * @return 转换后的一个字节整数
      */
-    public static short bytesToByte(byte[] bytes) {
-        return bytesToByte(bytes, ByteOrder.LITTLE_ENDIAN);
+    public static short bytesToShort(byte[] bytes) {
+        return bytesToShort(bytes, ByteOrder.LITTLE_ENDIAN);
     }
 
     /**
@@ -428,5 +406,109 @@ public class AsciiUtil {
      */
     public static short bytesToShort(byte[] bytes, int shift) {
         return bytesToShort(bytes, ByteOrder.LITTLE_ENDIAN, shift);
+    }
+
+    /**
+     * CRC校验
+     *
+     * @param msg    消息
+     * @param length 长度
+     * @return DATA_CRC 校验码
+     */
+    public static int crc16Checkout(char[] msg, int length) {
+        int i, j, crc_reg, check;
+
+        crc_reg = 0xFFFF;
+        for (i = 0; i < length; i++) {
+            crc_reg = (crc_reg >> 8) ^ msg[i];
+            for (j = 0; j < 8; j++) {
+                check = crc_reg & 0x0001;
+                crc_reg >>= 1;
+                if (check == 0x0001) {
+                    crc_reg ^= 0xA001;
+                }
+            }
+        }
+        return crc_reg;
+    }
+
+    /**
+     * CRC校验
+     *
+     * @param msg    消息
+     * @param length 长度
+     * @return DATA_CRC 校验码
+     */
+    public static int crc16CheckoutByte(byte[] msg, int length) {
+        int i, j, crc_reg, check;
+
+        crc_reg = 0xFFFF;
+        for (i = 0; i < length; i++) {
+            crc_reg = (crc_reg >> 8) ^ msg[i];
+            for (j = 0; j < 8; j++) {
+                check = crc_reg & 0x0001;
+                crc_reg >>= 1;
+                if (check == 0x0001) {
+                    crc_reg ^= 0xA001;
+                }
+            }
+        }
+        return crc_reg;
+    }
+
+    /**
+     * byte数组数据转为2进制字符数组并倒序
+     *
+     * @param bs 2进制字符数组
+     * @return 倒序后的2进制字符数组
+     */
+    public static char[] binaryTrans(byte[] bs) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bs) {
+            sb.append(String.format("%08d", Convert.toLong(Integer.toBinaryString(b))));
+        }
+        return sb.reverse().toString().toCharArray();
+    }
+
+    /**
+     * byte数组转short<br>
+     * 默认以小端序转换
+     *
+     * @param bytes byte数组
+     * @return short值
+     */
+    public static short bytesToCount(byte[] bytes) {
+        return bytesToCount(bytes, ByteOrder.LITTLE_ENDIAN);
+    }
+
+    /**
+     * 16进制字节数组转为short
+     */
+    public static short bytesToCount(byte[] bytes, ByteOrder byteOrder) {
+        if (ByteOrder.LITTLE_ENDIAN == byteOrder) {
+            //小端模式，数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
+            return (short) (bytes[0] & 0xff | (bytes[1] & 0xff) << Byte.SIZE);
+        } else {
+            return (short) (bytes[1] & 0xff | (bytes[0] & 0xff) << Byte.SIZE);
+        }
+    }
+
+    public static int crcModbusCheck(byte[] bytes) {
+        int CRC = 0x0000ffff;
+        int POLYNOMIAL = 0x0000a001;
+
+        int i, j;
+        for (i = 0; i < bytes.length; i++) {
+            CRC ^= ((int) bytes[i] & 0x000000ff);
+            for (j = 0; j < 8; j++) {
+                if ((CRC & 0x00000001) != 0) {
+                    CRC >>= 1;
+                    CRC ^= POLYNOMIAL;
+                } else {
+                    CRC >>= 1;
+                }
+            }
+        }
+        return CRC;
     }
 }
