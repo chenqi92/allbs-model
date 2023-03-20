@@ -1,7 +1,6 @@
 package cn.allbs.utils;
 
 import cn.allbs.enums.WaterQualityItemEnum;
-import cn.hutool.core.map.MapUtil;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class WaterGradeUtil {
      * @return 水质等级
      */
     public Integer countWaterGrade(Map<String, Double> pollutantMap, boolean isLakeOrReservoir) {
-        if (MapUtil.isNotEmpty(pollutantMap)) {
+        if (null != pollutantMap && !pollutantMap.isEmpty()) {
             List<Integer> list = new ArrayList<>();
             pollutantMap.forEach((k, v) -> {
                 if (v == null) {

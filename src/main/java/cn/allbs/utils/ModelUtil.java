@@ -3,10 +3,6 @@ package cn.allbs.utils;
 import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
 import cn.allbs.model.SpacePoint;
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.NumberUtil;
-import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -157,15 +153,15 @@ public class ModelUtil {
     /**
      * 高斯烟团计算模型
      *
-     * @param ws             平均风速 m/s
-     * @param t              扩散时间 s
-     * @param q              瞬时排放的物料质量 kg
-     * @param angle          风向 度
-     * @param lng            起火中心点经度
-     * @param lat            起火中心点纬度
-     * @param height         起火中心点高度
-     * @param distance       扩散距离
-     * @param step 步长
+     * @param ws       平均风速 m/s
+     * @param t        扩散时间 s
+     * @param q        瞬时排放的物料质量 kg
+     * @param angle    风向 度
+     * @param lng      起火中心点经度
+     * @param lat      起火中心点纬度
+     * @param height   起火中心点高度
+     * @param distance 扩散距离
+     * @param step     步长
      * @return 空间点中气体浓度
      */
     public Set<SpacePoint> gaussSmokeRegiment(double ws, double t, double q, double angle, double lng, double lat, double height, double distance, double step) {
@@ -182,8 +178,8 @@ public class ModelUtil {
                 return;
             }
             // 气体泄露
-            double c = NumberUtil.round(GaussUtil.smokeConcentration(q, ws, t, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
-            if (ObjectUtil.isNotNull(c) && c != 0) {
+            double c = CommonUtil.round(GaussUtil.smokeConcentration(q, ws, t, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
+            if (CommonUtil.isNotNull(c) && c != 0) {
                 poolFirePoints.add(new SpacePoint(a, c));
             }
         });
@@ -193,16 +189,16 @@ public class ModelUtil {
     /**
      * 带入扩散系数计算高斯烟羽模型
      *
-     * @param ws             平均风速 m/s 只考虑横向风
-     * @param q              连续泄露的质量流量 kg/s
-     * @param l              太阳辐射等级
-     * @param h              泄漏源源高
-     * @param angle          风向角度
-     * @param lng            起火中心点经度
-     * @param lat            起火中心点纬度
-     * @param height         起火中心点高度
-     * @param distance       扩散距离
-     * @param step 步长
+     * @param ws       平均风速 m/s 只考虑横向风
+     * @param q        连续泄露的质量流量 kg/s
+     * @param l        太阳辐射等级
+     * @param h        泄漏源源高
+     * @param angle    风向角度
+     * @param lng      起火中心点经度
+     * @param lat      起火中心点纬度
+     * @param height   起火中心点高度
+     * @param distance 扩散距离
+     * @param step     步长
      * @return 空间点中气体浓度
      */
     public Set<SpacePoint> gaussPlumeWithFactor(double ws, double q, Integer l, double angle, double h, double lng, double lat, double height, double distance, double step) {
@@ -215,11 +211,11 @@ public class ModelUtil {
                 a.setZ(-(distance + a.getHeight()));
                 a.setHeight(0.0);
                 // 计算地面点源气体泄露
-                double c = NumberUtil.round(GaussUtil.allGroundReflection(q, ws, h, a.getX(), Math.abs(a.getY()), l), 3).doubleValue();
+                double c = CommonUtil.round(GaussUtil.allGroundReflection(q, ws, h, a.getX(), Math.abs(a.getY()), l), 3).doubleValue();
                 poolFirePoints.add(new SpacePoint(a, c));
             } else {
                 // 计算高架点源气体泄露
-                double c = NumberUtil.round(GaussUtil.highPowerContinuousDiffusion(q, ws, h, a.getX(), Math.abs(a.getY()), a.getZ(), l), 3).doubleValue();
+                double c = CommonUtil.round(GaussUtil.highPowerContinuousDiffusion(q, ws, h, a.getX(), Math.abs(a.getY()), a.getZ(), l), 3).doubleValue();
                 poolFirePoints.add(new SpacePoint(a, c));
             }
 
@@ -251,7 +247,7 @@ public class ModelUtil {
                 a.setHeight(0.0);
             }
             // 气体泄露
-            double c = NumberUtil.round(GaussUtil.powerContinuousDiffusionWithoutSigma(q, u, h, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
+            double c = CommonUtil.round(GaussUtil.powerContinuousDiffusionWithoutSigma(q, u, h, Math.abs(a.getX()), Math.abs(a.getY()), Math.abs(a.getZ())), 3).doubleValue();
             if (c != 0) {
                 poolFirePoints.add(new SpacePoint(a, c));
             }
@@ -263,13 +259,13 @@ public class ModelUtil {
     /**
      * 不带入扩散系数计算高斯烟羽模型
      *
-     * @param q        物料连续泄漏的质量流量，单位kg/s
-     * @param ce        平均风速m/s
-     * @param h        泄露源源高
-     * @param se      风向角度
-     * @param ue      扩散原点偏移后经纬度坐标
-     * @param step     步长
-     * @param z     水平高度
+     * @param q    物料连续泄漏的质量流量，单位kg/s
+     * @param ce   平均风速m/s
+     * @param h    泄露源源高
+     * @param se   风向角度
+     * @param ue   扩散原点偏移后经纬度坐标
+     * @param step 步长
+     * @param z    水平高度
      * @return 空间点中气体浓度
      */
     public List<Map<String, Object>> gaussPlumeWithoutFactor(Double q, Double ce, Double se, Double h, Double[] ue, Integer step, Double z) {
@@ -289,11 +285,11 @@ public class ModelUtil {
         aa:
         for (int a = 0; a <= 10000; a += step) {
             // x方向增值
-            Double ne = Convert.toDouble(a);
+            Double ne = (double) a;
             bb:
             for (int o = 0; o <= 2000; o += step) {
                 // y方向增值
-                Double ie = Convert.toDouble(o);
+                Double ie = (double) o;
                 Integer currLevel = calculate2(q, ne, ie, z, h, ce, Double.valueOf(0));
                 if (currLevel <= 0) {
                     break bb;
@@ -316,10 +312,10 @@ public class ModelUtil {
         // 计算扩散区域下半部分，同上
         cc:
         for (int a = 0; a <= 10000; a += step) {
-            Double ne = Convert.toDouble(a);
+            Double ne = (double) a;
             dd:
             for (int o = -step; o >= -4000; o -= step) {
-                Double ie = Convert.toDouble(o);
+                Double ie = (double) o;
                 Integer currLevel = calculate2(q, ne, ie, z, h, ce, Double.valueOf(0));
                 if (currLevel <= 0) {
                     break dd;
@@ -375,10 +371,10 @@ public class ModelUtil {
         // 根据大气稳定度等级-获取扩散参数值
         // Double[] spreadArray = getCardinalityArray(pointDto.getRadiationRank(), pointDto.getU());
         Double[] spreadArray = {};
-        Double a = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[0] : 0.527;
-        Double b = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[1] : 0.865;
-        Double c = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[2] : 0.280;
-        Double d = ArrayUtil.isNotEmpty(spreadArray) ? spreadArray[3] : 0.900;
+        Double a = CommonUtil.isNotEmpty(spreadArray) ? spreadArray[0] : 0.527;
+        Double b = CommonUtil.isNotEmpty(spreadArray) ? spreadArray[1] : 0.865;
+        Double c = CommonUtil.isNotEmpty(spreadArray) ? spreadArray[2] : 0.280;
+        Double d = CommonUtil.isNotEmpty(spreadArray) ? spreadArray[3] : 0.900;
 
         Double σy = a * Math.pow(x, b);
         Double σz = c * Math.pow(x, d);
@@ -452,10 +448,10 @@ public class ModelUtil {
         point3DS.forEach(a -> {
             double x = Math.max(a.getX() - u * t, xStep);
             Double gaussValue = GaussUtil.highPowerContinuousDiffusion(q, u, h, x, a.getY(), a.getZ(), t);
-            if (!ObjectUtil.isValidIfNumber(gaussValue)) {
+            if (!CommonUtil.isValidIfNumber(gaussValue)) {
                 return;
             }
-            BigDecimal value = NumberUtil.round(gaussValue, 5);
+            BigDecimal value = CommonUtil.round(gaussValue, 5);
             if (value.compareTo(new BigDecimal(0)) == 0) {
                 return;
             }

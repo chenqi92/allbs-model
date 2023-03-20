@@ -1,8 +1,8 @@
 package cn.allbs.utils.SFJK200.enums;
 
-import cn.hutool.core.convert.Convert;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +56,7 @@ public enum DetectorEnum {
     public static List<String> binaryTrans(byte bs) {
         List<String> resList = new LinkedList<>();
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%08d", Convert.toLong(Integer.toBinaryString(bs))));
+        sb.append(String.format("%08d", new BigDecimal(Integer.toBinaryString(bs)).longValue()));
         char[] binaryChars = sb.reverse().toString().toCharArray();
         int len = binaryChars.length;
         for (int i = 0; i < len; i++) {

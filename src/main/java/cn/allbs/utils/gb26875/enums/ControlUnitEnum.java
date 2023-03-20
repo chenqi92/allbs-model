@@ -1,6 +1,5 @@
 package cn.allbs.utils.gb26875.enums;
 
-import cn.hutool.core.convert.Convert;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +44,7 @@ public enum ControlUnitEnum {
     public static String orderTrans(short n) {
         ControlUnitEnum[] enums = ControlUnitEnum.values();
         for (ControlUnitEnum cu : enums) {
-            if (cu.num.equals(Convert.toInt(n))) {
+            if (cu.num.equals((int) n)) {
                 return cu.dsc;
             }
         }

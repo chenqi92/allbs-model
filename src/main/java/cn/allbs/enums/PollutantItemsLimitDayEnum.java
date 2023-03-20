@@ -1,8 +1,7 @@
 package cn.allbs.enums;
 
 import cn.allbs.constant.ParamConstant;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.NumberUtil;
+import cn.allbs.utils.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,20 +22,20 @@ public enum PollutantItemsLimitDayEnum {
     /**
      * 污染物24小时浓度限值
      */
-    SO2(PollutionGas.a21026.toString(), PollutionGas.a21026.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 50, 150, 475, 800, 1600, 2100, 2620)),
+    SO2(PollutionGas.a21026.toString(), PollutionGas.a21026.getMeaning(), "μg/m³", 1000D, CommonUtil.list(true, 0, 50, 150, 475, 800, 1600, 2100, 2620)),
 
-    NO2(PollutionGas.a21004.toString(), PollutionGas.a21004.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 40, 80, 180, 280, 565, 750, 940)),
+    NO2(PollutionGas.a21004.toString(), PollutionGas.a21004.getMeaning(), "μg/m³", 1000D, CommonUtil.list(true, 0, 40, 80, 180, 280, 565, 750, 940)),
 
-    PM10(PollutionGas.a34002.toString(), PollutionGas.a34002.getMeaning(), "μg/m³", 0.001, CollUtil.list(true, 0, 50, 150, 250, 350, 420, 500, 600)),
+    PM10(PollutionGas.a34002.toString(), PollutionGas.a34002.getMeaning(), "μg/m³", 0.001, CommonUtil.list(true, 0, 50, 150, 250, 350, 420, 500, 600)),
 
-    CO(PollutionGas.a21005.toString(), PollutionGas.a21005.getMeaning(), "mg/m³", 1D, CollUtil.list(true, 0, 2, 14, 14, 24, 36, 48, 60)),
+    CO(PollutionGas.a21005.toString(), PollutionGas.a21005.getMeaning(), "mg/m³", 1D, CommonUtil.list(true, 0, 2, 14, 14, 24, 36, 48, 60)),
 
     /**
      * 臭氧日 每8小时滑动平均
      */
-    O3("O3", "臭氧", "μg/m³", 1000D, CollUtil.list(true, 0, 100, 160, 215, 265, 800)),
+    O3("O3", "臭氧", "μg/m³", 1000D, CommonUtil.list(true, 0, 100, 160, 215, 265, 800)),
 
-    PM25(PollutionGas.a34004.toString(), PollutionGas.a34004.getMeaning(), "μg/m³", 0.001, CollUtil.list(true, 0, 35, 75, 115, 150, 250, 350, 500));
+    PM25(PollutionGas.a34004.toString(), PollutionGas.a34004.getMeaning(), "μg/m³", 0.001, CommonUtil.list(true, 0, 35, 75, 115, 150, 250, 350, 500));
 
     /**
      * 污染物编码
@@ -89,7 +88,7 @@ public enum PollutantItemsLimitDayEnum {
         cp = DAY_ENUM_MAP.get(code).getRate();
         for (int i = 0; i < sectionList.size(); i++) {
             if (cp < sectionList.get(i)) {
-                return NumberUtil.round(BigDecimal.valueOf(ParamConstant.I_AQI.get(i) - ParamConstant.I_AQI.get(i - 1)).divide(BigDecimal.valueOf((sectionList.get(i) - sectionList.get(i - 1))), 2, BigDecimal.ROUND_HALF_DOWN).multiply(BigDecimal.valueOf((cp - sectionList.get(i - 1)))).add(BigDecimal.valueOf(ParamConstant.I_AQI.get(i - 1))), 2).doubleValue();
+                return CommonUtil.round(BigDecimal.valueOf(ParamConstant.I_AQI.get(i) - ParamConstant.I_AQI.get(i - 1)).divide(BigDecimal.valueOf((sectionList.get(i) - sectionList.get(i - 1))), 2, BigDecimal.ROUND_HALF_DOWN).multiply(BigDecimal.valueOf((cp - sectionList.get(i - 1)))).add(BigDecimal.valueOf(ParamConstant.I_AQI.get(i - 1))), 2).doubleValue();
             }
         }
         return null;

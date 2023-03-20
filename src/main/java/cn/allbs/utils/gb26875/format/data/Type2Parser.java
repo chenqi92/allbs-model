@@ -1,13 +1,11 @@
 package cn.allbs.utils.gb26875.format.data;
 
+import cn.allbs.constant.DateConstant;
 import cn.allbs.constant.StringPoolConstant;
 import cn.allbs.utils.AsciiUtil;
 import cn.allbs.utils.gb26875.enums.system.Type1STEnum;
 import cn.allbs.utils.gb26875.enums.system.Type2SSEnum;
 import cn.allbs.utils.gb26875.enums.system.Type2STEnum;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DatePattern;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -36,7 +34,7 @@ public class Type2Parser extends AbstractParser {
     @Override
     protected void readSysType() throws IOException {
         short type = (short) (this.dataOutputStream.readByte() & 0xff);
-        this.dataMap.put(SYS_TYPE.getConstDefined(), Convert.toInt(type));
+        this.dataMap.put(SYS_TYPE.getConstDefined(), (int) type);
         this.dataMap.put(SYS_TYPE_TRANS.getConstDefined(), Optional.of(Type1STEnum.TYPE_1_MAP).map(a -> a.get(type)).orElse("未定义"));
     }
 
@@ -57,7 +55,7 @@ public class Type2Parser extends AbstractParser {
     @Override
     protected void readPartType() throws IOException {
         short partType = (short) (this.dataOutputStream.readByte() & 0xff);
-        this.dataMap.put(PART_TYPE.getConstDefined(), Convert.toInt(partType));
+        this.dataMap.put(PART_TYPE.getConstDefined(), (int) partType);
         // 部件类型解释
         this.dataMap.put(PART_TYPE_TRANS.getConstDefined(), Optional.of(Type2STEnum.TYPE_2_MAP).map(a -> a.get(partType)).orElse("未定义"));
     }
@@ -91,7 +89,7 @@ public class Type2Parser extends AbstractParser {
             partDesc[i] = this.dataOutputStream.readByte();
         }
         List<String> list = Type2SSEnum.binaryTrans(partDesc);
-        this.dataMap.put(PART_DESC.getConstDefined(), CollUtil.join(list, StringPoolConstant.COMMA));
+        this.dataMap.put(PART_DESC.getConstDefined(), String.join(StringPoolConstant.COMMA, list));
     }
 
     /**
@@ -122,6 +120,6 @@ public class Type2Parser extends AbstractParser {
             times[5 - i] = (short) (dataOutputStream.readByte() & 0xff);
         }
         LocalDateTime time = LocalDateTime.of(times[0] + 2000, times[1], times[2], times[3], times[4], times[5]);
-        this.dataMap.put(HAPPEN_TIME.getConstDefined(), time.format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+        this.dataMap.put(HAPPEN_TIME.getConstDefined(), time.format(DateTimeFormatter.ofPattern(DateConstant.NORM_DATETIME_PATTERN)));
     }
 }

@@ -1,6 +1,5 @@
 package cn.allbs.enums;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -21,42 +20,42 @@ public enum MathExtentEnum {
     /**
      * 有界区间-闭区间
      */
-    IN_SECTION_LEFT_RIGHT("[a,b]:{x∈R:a≤x≤b}", "[{},{}]"),
+    IN_SECTION_LEFT_RIGHT("[a,b]:{x∈R:a≤x≤b}", "[%s,%s]"),
 
     /**
      * 左闭右开区间
      */
-    IN_SECTION_LEFT_ONLY("[a,b)={x∈R:a≤x<b}", "[{},{})"),
+    IN_SECTION_LEFT_ONLY("[a,b)={x∈R:a≤x<b}", "[%s,%s)"),
 
     /**
      * 左开右闭区间
      */
-    IN_SECTION_RIGHT_ONLY("(a,b]={x∈R:a<x≤b}", "({},{}]"),
+    IN_SECTION_RIGHT_ONLY("(a,b]={x∈R:a<x≤b}", "(%s,%s]"),
 
     /**
      * 开区间
      */
-    IN_SECTION("(a,b)={x∈R:a<x<b}", "({},{})"),
+    IN_SECTION("(a,b)={x∈R:a<x<b}", "(%s,%s)"),
 
     /**
      * 左闭
      */
-    LEFT_CLOSED("[a,+∞)={x∈R:x≥a}", "[{},+∞)"),
+    LEFT_CLOSED("[a,+∞)={x∈R:x≥a}", "[%s,+∞)"),
 
     /**
      * 左开
      */
-    LEFT_OPEN("(a,+∞)={x∈R:x>a}", "({},+∞)"),
+    LEFT_OPEN("(a,+∞)={x∈R:x>a}", "(%s,+∞)"),
 
     /**
      * 右闭
      */
-    RIGHT_CLOSED("(-∞, b]={x∈R:x≤b}", "(-∞, {}]"),
+    RIGHT_CLOSED("(-∞, b]={x∈R:x≤b}", "(-∞, %s]"),
 
     /**
      * 右开
      */
-    RIGHT_OPEN("(-∞, b)={x∈R:x<b}", "(-∞, {})");
+    RIGHT_OPEN("(-∞, b)={x∈R:x<b}", "(-∞, %s)");
 
     /**
      * 数学定义
@@ -79,13 +78,13 @@ public enum MathExtentEnum {
      */
     public static String getEqExpressAllClose(Double min, Double max) {
         if (min != null && max != null) {
-            return StrUtil.format(IN_SECTION_LEFT_RIGHT.getExpression(), min, max);
+            return String.format(IN_SECTION_LEFT_RIGHT.getExpression(), min, max);
         }
         if (min != null) {
-            return StrUtil.format(LEFT_CLOSED.getExpression(), min);
+            return String.format(LEFT_CLOSED.getExpression(), min);
         }
         if (max != null) {
-            return StrUtil.format(RIGHT_CLOSED.getExpression(), max);
+            return String.format(RIGHT_CLOSED.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -101,13 +100,13 @@ public enum MathExtentEnum {
      */
     public static String getEqExpressAllOpen(Double min, Double max) {
         if (min != null && max != null) {
-            return StrUtil.format(IN_SECTION.getExpression(), min, max);
+            return String.format(IN_SECTION.getExpression(), min, max);
         }
         if (min != null) {
-            return StrUtil.format(LEFT_OPEN.getExpression(), min);
+            return String.format(LEFT_OPEN.getExpression(), min);
         }
         if (max != null) {
-            return StrUtil.format(RIGHT_OPEN.getExpression(), max);
+            return String.format(RIGHT_OPEN.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -123,13 +122,13 @@ public enum MathExtentEnum {
      */
     public static String getEqExpressLeftOpenOnly(Double min, Double max) {
         if (min != null && max != null) {
-            return StrUtil.format(IN_SECTION_RIGHT_ONLY.getExpression(), min, max);
+            return String.format(IN_SECTION_RIGHT_ONLY.getExpression(), min, max);
         }
         if (min != null) {
-            return StrUtil.format(LEFT_OPEN.getExpression(), min);
+            return String.format(LEFT_OPEN.getExpression(), min);
         }
         if (max != null) {
-            return StrUtil.format(RIGHT_CLOSED.getExpression(), max);
+            return String.format(RIGHT_CLOSED.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
@@ -145,15 +144,14 @@ public enum MathExtentEnum {
      */
     public static String getEqExpressRightOpenOnly(Double min, Double max) {
         if (min != null && max != null) {
-            return StrUtil.format(IN_SECTION_LEFT_ONLY.getExpression(), min, max);
+            return String.format(IN_SECTION_LEFT_ONLY.getExpression(), min, max);
         }
         if (min != null) {
-            return StrUtil.format(LEFT_CLOSED.getExpression(), min);
+            return String.format(LEFT_CLOSED.getExpression(), min);
         }
         if (max != null) {
-            return StrUtil.format(RIGHT_OPEN.getExpression(), max);
+            return String.format(RIGHT_OPEN.getExpression(), max);
         }
         return NO_LIMIT.getExpression();
     }
-
 }

@@ -1,6 +1,5 @@
 package cn.allbs.utils;
 
-import cn.hutool.core.util.ObjectUtil;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -77,15 +76,15 @@ public class EvaporationUtil {
     public Double totalEvaporation(Double qm, Double cp, Double tt, Double tb, Double hv, Double a1, Double t0, Double h, Double t, Double u, Double r, Double m, Double t1, Double t2, Double t3) {
         double total = 0;
         // 闪蒸气云质量质量计算
-        if (ObjectUtil.isAllNotEmpty(qm, cp, tt, tb, hv, t1)) {
+        if (CommonUtil.isAllNotEmpty(qm, cp, tt, tb, hv, t1)) {
             total = total + onlyFlash(qm, cp, tt, tb, hv, t1);
         }
         // 热量增发气云质量计算
-        if (ObjectUtil.isAllNotEmpty(a1, t0, h, t, t2, tb)) {
+        if (CommonUtil.isAllNotEmpty(a1, t0, h, t, t2, tb)) {
             total = total + onlyHeatOfEvaporation(a1, t0, h, t, t2, tb);
         }
         // 质量蒸发气云质量计算
-        if (ObjectUtil.isAllNotEmpty(t0, u, r, m, t3)) {
+        if (CommonUtil.isAllNotEmpty(t0, u, r, m, t3)) {
             total = total + onlyQualityOfEvaporation(t0, u, r, m, t3);
         }
         return total;

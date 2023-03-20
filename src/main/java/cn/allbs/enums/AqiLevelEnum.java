@@ -1,7 +1,6 @@
 package cn.allbs.enums;
 
 import cn.allbs.utils.IntervalUtil;
-import cn.hutool.core.convert.Convert;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -78,7 +77,7 @@ public enum AqiLevelEnum {
     public static AqiLevelEnum getLevelInfoByAqi(int aqi) {
         AqiLevelEnum[] aqiLevelEnums = AqiLevelEnum.values();
         for (AqiLevelEnum aqiLevelEnum : aqiLevelEnums) {
-            if (IntervalUtil.checkInAllCloseInterval(aqiLevelEnum.getMin(), aqiLevelEnum.getMax(), Convert.toDouble(aqi))) {
+            if (IntervalUtil.checkInAllCloseInterval(aqiLevelEnum.getMin(), aqiLevelEnum.getMax(), (double) aqi)) {
                 return aqiLevelEnum;
             }
         }

@@ -1,6 +1,5 @@
 package cn.allbs.utils;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 
 import javax.validation.constraints.NotNull;
@@ -52,6 +51,6 @@ public class UuidFormByTimeUtil {
         int hour = now.getHour();
         int minute = now.getMinute();
         int second = now.getSecond();
-        return StrUtil.concat(false, headPrefix, middlePrefix, scale[year], scale[month], scale[day], scale[hour], scale[minute], scale[second]);
+        return CommonUtil.concat(false, headPrefix, middlePrefix, scale[year], scale[month], scale[day], scale[hour], scale[minute], scale[second]);
     }
 }

@@ -1,10 +1,9 @@
 package cn.allbs.utils.gb26875.format.data;
 
+import cn.allbs.constant.DateConstant;
 import cn.allbs.constant.StringPoolConstant;
 import cn.allbs.utils.gb26875.enums.system.Type1SSEnum;
 import cn.allbs.utils.gb26875.enums.system.Type1STEnum;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DatePattern;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -61,7 +60,7 @@ public class Type1Parser extends AbstractParser {
             partDesc[i] = this.dataOutputStream.readByte();
         }
         List<String> list = Type1SSEnum.binaryTrans(partDesc);
-        this.dataMap.put(SYS_DESC.getConstDefined(), CollUtil.join(list, StringPoolConstant.COMMA));
+        this.dataMap.put(SYS_DESC.getConstDefined(), String.join(StringPoolConstant.COMMA, list));
     }
 
     /**
@@ -76,7 +75,7 @@ public class Type1Parser extends AbstractParser {
             times[5 - i] = (short) (dataOutputStream.readByte() & 0xff);
         }
         LocalDateTime time = LocalDateTime.of(times[0] + 2000, times[1], times[2], times[3], times[4], times[5]);
-        this.dataMap.put(HAPPEN_TIME.getConstDefined(), time.format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+        this.dataMap.put(HAPPEN_TIME.getConstDefined(), time.format(DateTimeFormatter.ofPattern(DateConstant.NORM_DATETIME_PATTERN)));
     }
 
 }

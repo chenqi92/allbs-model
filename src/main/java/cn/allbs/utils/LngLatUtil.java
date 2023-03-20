@@ -4,8 +4,6 @@ import cn.allbs.constant.CommonConstant;
 import cn.allbs.constant.ParamConstant;
 import cn.allbs.enums.CoordinateSystemEnum;
 import cn.allbs.model.Point3D;
-import cn.hutool.core.util.NumberUtil;
-import cn.hutool.json.JSONArray;
 import lombok.experimental.UtilityClass;
 
 import java.awt.*;
@@ -105,8 +103,7 @@ public class LngLatUtil {
         double radLat2 = Math.toRadians(endLat);
         double a = radLat1 - radLat2;
         double b = Math.toRadians(startLng) - Math.toRadians(endLng);
-        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
-                Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
         s = s * WGS84_EARTH_RADIUS;
         s = Math.round(s * 10000d) / 10000d;
         return s;
@@ -160,8 +157,8 @@ public class LngLatUtil {
         // 转为正常的10进制经纬度
         lng = Math.toDegrees(lng);
         lat = Math.toDegrees(lat);
-        result.put(CommonConstant.LONGITUDE, NumberUtil.round(lng, 6).doubleValue());
-        result.put(CommonConstant.LATITUDE, NumberUtil.round(lat, 6).doubleValue());
+        result.put(CommonConstant.LONGITUDE, CommonUtil.round(lng, 6).doubleValue());
+        result.put(CommonConstant.LATITUDE, CommonUtil.round(lat, 6).doubleValue());
         return result;
     }
 
@@ -228,7 +225,7 @@ public class LngLatUtil {
      * @param points   经纬度json数组 "[{\"x\":120.61123416,\"y\":31.32889074,\"z\":137.05},{\"x\":120.61312695,\"y\":31.31892631,\"z\":128.61},{\"x\":120.61455616,\"y\":31.30808702,\"z\":43.66},{\"x\":120.62127327,\"y\":31.30899876,\"z\":62.21},{\"x\":120.63003506,\"y\":31.31057071,\"z\":29.43},{\"x\":120.63726235,\"y\":31.31203339,\"z\":92.90},{\"x\":120.64536616,\"y\":31.31334188,\"z\":78.36},{\"x\":120.64402082,\"y\":31.31947999,\"z\":13.19},{\"x\":120.64136126,\"y\":31.32757908,\"z\":87.36},{\"x\":120.63689776,\"y\":31.33287239,\"z\":60.62},{\"x\":120.63502091,\"y\":31.33742080,\"z\":114.21},{\"x\":120.63071787,\"y\":31.33793104,\"z\":32.99},{\"x\":120.62952446,\"y\":31.34483170,\"z\":164.79},{\"x\":120.62710968,\"y\":31.34801804,\"z\":164.15},{\"x\":120.62731359,\"y\":31.34823458,\"z\":189.53},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62700980,\"y\":31.34894193,\"z\":194.24},{\"x\":120.62665860,\"y\":31.34861797,\"z\":155.41},{\"x\":120.61706620,\"y\":31.34846463,\"z\":200.05},{\"x\":120.61854348,\"y\":31.34267516,\"z\":138.68},{\"x\":120.62111689,\"y\":31.33313042,\"z\":154.61}]"
      * @return true 在范围内 false 不在范围内
      */
-    public static boolean isInPolygon(double pointLon, double pointLat, JSONArray points) {
+    public static boolean isInPolygon(double pointLon, double pointLat, List<Point3D> points) {
         // 将要判断的横纵坐标组成一个点
         Point2D.Double point = new Point.Double(pointLon, pointLat);
         // 将区域各顶点的横纵坐标放到一个点集合里面
@@ -236,8 +233,8 @@ public class LngLatUtil {
         double polygonPointX, polygonPointY;
         int len = points.size();
         for (int i = 0; i < len; i++) {
-            polygonPointX = points.getJSONObject(i).getDouble("x");
-            polygonPointY = points.getJSONObject(i).getDouble("y");
+            polygonPointX = points.get(i).getX();
+            polygonPointY = points.get(i).getY();
             Point2D.Double polygonPoint = new Point2D.Double(polygonPointX, polygonPointY);
             pointList.add(polygonPoint);
         }
@@ -253,7 +250,7 @@ public class LngLatUtil {
      * @param coordinateSystemEnum 坐标系
      * @return true 在范围内 false 不在范围内
      */
-    public static boolean isInPolygon(double pointLon, double pointLat, JSONArray points, CoordinateSystemEnum coordinateSystemEnum) {
+    public static boolean isInPolygon(double pointLon, double pointLat, List<Point3D> points, CoordinateSystemEnum coordinateSystemEnum) {
         // 火星坐标系转化
         if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
             double[] trans = GPSConverterUtils.gcj02toWgs84(pointLon, pointLat);
@@ -273,8 +270,8 @@ public class LngLatUtil {
         double polygonPointX, polygonPointY;
         int len = points.size();
         for (int i = 0; i < len; i++) {
-            polygonPointX = points.getJSONObject(i).getDouble("x");
-            polygonPointY = points.getJSONObject(i).getDouble("y");
+            polygonPointX = points.get(i).getX();
+            polygonPointY = points.get(i).getY();
             // 火星坐标系转化
             if (coordinateSystemEnum.equals(CoordinateSystemEnum.GCJ02)) {
                 double[] trans = GPSConverterUtils.gcj02toWgs84(polygonPointX, polygonPointY);
@@ -334,9 +331,7 @@ public class LngLatUtil {
         double maxAngel = angel + diffuse;
         // 计算斜边
         double st = Math.atan2(checkLat - startLat, checkLng - startLng);
-        return IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st - 2 * Math.PI) * 180 / Math.PI)
-                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st * 180 / Math.PI)
-                || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st + 2 * Math.PI) * 180 / Math.PI);
+        return IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st - 2 * Math.PI) * 180 / Math.PI) || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, st * 180 / Math.PI) || IntervalUtil.checkInAllCloseInterval(minAngel, maxAngel, (st + 2 * Math.PI) * 180 / Math.PI);
     }
 
     /**
@@ -378,7 +373,7 @@ public class LngLatUtil {
         // 转为正常的10进制经纬度
         lng = Math.toDegrees(lng);
         lat = Math.toDegrees(lat);
-        return new Point3D(NumberUtil.round(lng, 6).doubleValue(), NumberUtil.round(lat, 6).doubleValue(), point3D.getZ());
+        return new Point3D(CommonUtil.round(lng, 6).doubleValue(), CommonUtil.round(lat, 6).doubleValue(), point3D.getZ());
     }
 
     /**

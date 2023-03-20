@@ -1,7 +1,6 @@
 package cn.allbs.utils;
 
 import cn.allbs.constant.ParamConstant;
-import cn.hutool.core.convert.Convert;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -34,7 +33,7 @@ public class DateStaticsSectionUtil {
      */
     public Map<String, BigDecimal> minuteSection(LocalDateTime startTime, LocalDateTime endTime, int interval, String pattern) {
         Duration duration = Duration.between(startTime, endTime);
-        int num = Convert.toInt(Math.ceil(duration.toMinutes() * (float) 4 / 3 + 1));
+        int num = BigDecimal.valueOf(Math.ceil(duration.toMinutes() * (float) 4 / 3 + 1)).intValue();
         Map<String, BigDecimal> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
             result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
@@ -96,7 +95,7 @@ public class DateStaticsSectionUtil {
      */
     public Map<String, BigDecimal> daySection(LocalDate startTime, LocalDate endTime, String pattern) {
         Period betweenDays = Period.between(startTime, endTime);
-        int num = Convert.toInt(Math.ceil(betweenDays.getDays() * (float) 4 / 3 + 1));
+        int num = BigDecimal.valueOf(Math.ceil(betweenDays.getDays() * (float) 4 / 3 + 1)).intValue();
         Map<String, BigDecimal> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
             result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));

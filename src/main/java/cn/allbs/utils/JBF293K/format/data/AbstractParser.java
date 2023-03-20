@@ -1,11 +1,11 @@
 package cn.allbs.utils.JBF293K.format.data;
 
+import cn.allbs.constant.DateConstant;
 import cn.allbs.utils.AsciiUtil;
 import cn.allbs.core.Configurator;
 import cn.allbs.core.Configured;
 import cn.allbs.utils.JBF293K.enums.KeyWordEnums;
 import cn.allbs.exception.JBF293KException;
-import cn.hutool.core.date.DatePattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -177,7 +177,7 @@ public abstract class AbstractParser implements IParser, Configured<AbstractPars
         short hour = handleByte(D9.getLen());
         short minute = handleByte(D10.getLen());
         short second = handleByte(D11.getLen());
-        this.dataMap.put(KeyWordEnums.TIME.getName(), LocalDateTime.of(2000 + year, month, day, hour, minute, second).format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+        this.dataMap.put(KeyWordEnums.TIME.getName(), LocalDateTime.of(2000 + year, month, day, hour, minute, second).format(DateTimeFormatter.ofPattern(DateConstant.NORM_DATETIME_PATTERN)));
     }
 
     /**

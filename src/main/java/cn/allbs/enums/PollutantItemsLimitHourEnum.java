@@ -1,12 +1,12 @@
 package cn.allbs.enums;
 
 import cn.allbs.constant.ParamConstant;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.NumberUtil;
+import cn.allbs.utils.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +23,13 @@ public enum PollutantItemsLimitHourEnum {
     /**
      * 污染物一小时浓度限值
      */
-    SO2(PollutionGas.a21026.toString(), PollutionGas.a21026.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 150, 500, 650, 800)),
+    SO2(PollutionGas.a21026.toString(), PollutionGas.a21026.getMeaning(), "μg/m³", 1000D, CommonUtil.list(true, 0, 150, 500, 650, 800)),
 
-    NO2(PollutionGas.a21004.toString(), PollutionGas.a21004.getMeaning(), "μg/m³", 1000D, CollUtil.list(true, 0, 100, 200, 700, 1200, 2340, 3090, 3840)),
+    NO2(PollutionGas.a21004.toString(), PollutionGas.a21004.getMeaning(), "μg/m³", 1000D, CommonUtil.list(true, 0, 100, 200, 700, 1200, 2340, 3090, 3840)),
 
-    CO(PollutionGas.a21005.toString(), PollutionGas.a21005.getMeaning(), "mg/m³", 1D, CollUtil.list(true, 0, 5, 10, 35, 60, 90, 120, 150)),
+    CO(PollutionGas.a21005.toString(), PollutionGas.a21005.getMeaning(), "mg/m³", 1D, CommonUtil.list(true, 0, 5, 10, 35, 60, 90, 120, 150)),
 
-    O3("O3", "臭氧", "μg/m³", 1000D, CollUtil.list(true, 0, 160, 200, 300, 400, 800, 1000, 1200));
+    O3("O3", "臭氧", "μg/m³", 1000D, CommonUtil.list(true, 0, 160, 200, 300, 400, 800, 1000, 1200));
 
     /**
      * 污染物编码
@@ -84,7 +84,7 @@ public enum PollutantItemsLimitHourEnum {
             // 判断在哪个区间中
             if (cp <= sectionList.get(i)) {
                 // 计算aqi
-                return NumberUtil.round(BigDecimal.valueOf(ParamConstant.I_AQI.get(i) - ParamConstant.I_AQI.get(i - 1)).divide(BigDecimal.valueOf(sectionList.get(i) - sectionList.get(i - 1)), 2, BigDecimal.ROUND_HALF_DOWN).multiply(BigDecimal.valueOf((cp - sectionList.get(i - 1)))).add(BigDecimal.valueOf(ParamConstant.I_AQI.get(i - 1))), 2).doubleValue();
+                return CommonUtil.round(BigDecimal.valueOf(ParamConstant.I_AQI.get(i) - ParamConstant.I_AQI.get(i - 1)).divide(BigDecimal.valueOf(sectionList.get(i) - sectionList.get(i - 1)), 2, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf((cp - sectionList.get(i - 1)))).add(BigDecimal.valueOf(ParamConstant.I_AQI.get(i - 1))), 2).doubleValue();
             }
         }
         return null;

@@ -1,8 +1,8 @@
 package cn.allbs.utils.SFJK200.enums;
 
-import cn.hutool.core.convert.Convert;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +73,7 @@ public enum MonitorEnum {
         List<String> resList = new LinkedList<>();
         StringBuilder sb = new StringBuilder();
         for (byte b : bs) {
-            sb.append(String.format("%08d", Convert.toLong(Integer.toBinaryString(b))));
+            sb.append(String.format("%08d", new BigDecimal(Integer.toBinaryString(b)).longValue()));
         }
         char[] binaryChars = sb.reverse().toString().toCharArray();
         int len = binaryChars.length;

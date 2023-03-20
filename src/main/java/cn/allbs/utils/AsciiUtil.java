@@ -1,7 +1,6 @@
 package cn.allbs.utils;
 
 import cn.allbs.constant.StringPoolConstant;
-import cn.hutool.core.convert.Convert;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -268,8 +267,8 @@ public class AsciiUtil {
         StringBuilder st = new StringBuilder();
         try {
             byte[] by = str.getBytes(charsetName);
-            for (int i = 0; i < by.length; i++) {
-                String strs = Integer.toHexString(by[i]);
+            for (byte b : by) {
+                String strs = Integer.toHexString(b);
                 if (strs.length() > 2) {
                     strs = strs.substring(strs.length() - 2);
                 }
@@ -465,7 +464,7 @@ public class AsciiUtil {
     public static char[] binaryTrans(byte[] bs) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bs) {
-            sb.append(String.format("%08d", Convert.toLong(Integer.toBinaryString(b))));
+            sb.append(String.format("%08d", Long.valueOf(Integer.toBinaryString(b))));
         }
         return sb.reverse().toString().toCharArray();
     }

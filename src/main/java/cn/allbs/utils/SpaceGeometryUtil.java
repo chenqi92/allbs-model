@@ -2,11 +2,10 @@ package cn.allbs.utils;
 
 import cn.allbs.model.EarthPoint3D;
 import cn.allbs.model.Point3D;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.util.ArrayUtil;
 import lombok.experimental.UtilityClass;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,13 +48,13 @@ public class SpaceGeometryUtil {
     public Set<Set<Point3D>> cubeFace(Point3D point3D, double distance) {
         Set<Set<Point3D>> faces = new HashSet<>();
         Set<Point3D> points = cubePeak(point3D, distance);
-        Point3D[] pointsArray = ArrayUtil.toArray(points, Point3D.class);
-        faces.add(CollUtil.newHashSet(pointsArray[0], pointsArray[0], pointsArray[0], pointsArray[0]));
-        faces.add(CollUtil.newHashSet(pointsArray[3], pointsArray[2], pointsArray[5], pointsArray[4]));
-        faces.add(CollUtil.newHashSet(pointsArray[4], pointsArray[5], pointsArray[6], pointsArray[7]));
-        faces.add(CollUtil.newHashSet(pointsArray[7], pointsArray[6], pointsArray[1], pointsArray[0]));
-        faces.add(CollUtil.newHashSet(pointsArray[7], pointsArray[0], pointsArray[3], pointsArray[4]));
-        faces.add(CollUtil.newHashSet(pointsArray[1], pointsArray[6], pointsArray[5], pointsArray[2]));
+        Point3D[] pointsArray = CommonUtil.toArray(points, Point3D.class);
+        faces.add(CommonUtil.newHashSet(pointsArray[0], pointsArray[0], pointsArray[0], pointsArray[0]));
+        faces.add(CommonUtil.newHashSet(pointsArray[3], pointsArray[2], pointsArray[5], pointsArray[4]));
+        faces.add(CommonUtil.newHashSet(pointsArray[4], pointsArray[5], pointsArray[6], pointsArray[7]));
+        faces.add(CommonUtil.newHashSet(pointsArray[7], pointsArray[6], pointsArray[1], pointsArray[0]));
+        faces.add(CommonUtil.newHashSet(pointsArray[7], pointsArray[0], pointsArray[3], pointsArray[4]));
+        faces.add(CommonUtil.newHashSet(pointsArray[1], pointsArray[6], pointsArray[5], pointsArray[2]));
         return faces;
     }
 
@@ -186,10 +185,10 @@ public class SpaceGeometryUtil {
         Set<EarthPoint3D> batchPoints = new HashSet<>();
         double h = point3D.getZ();
         // 平移距离/步长向上取整
-        Set<Double> xRange = CollUtil.newHashSet(distance, -distance);
-        Set<Double> yRange = CollUtil.newHashSet(distance, -distance);
-        Set<Double> zRange = CollUtil.newHashSet(point3D.getZ());
-        int section = Convert.toInt(Math.ceil(distance / step));
+        Set<Double> xRange = CommonUtil.newHashSet(distance, -distance);
+        Set<Double> yRange = CommonUtil.newHashSet(distance, -distance);
+        Set<Double> zRange = CommonUtil.newHashSet(point3D.getZ());
+        int section = BigDecimal.valueOf(distance).divide(BigDecimal.valueOf(step), 0, RoundingMode.HALF_UP).intValue();
         for (int index = 0; index < section; index++) {
             xRange.add(index * step);
             xRange.add(-index * step);

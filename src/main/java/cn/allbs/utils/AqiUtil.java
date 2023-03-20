@@ -2,10 +2,9 @@ package cn.allbs.utils;
 
 import cn.allbs.constant.CommonConstant;
 import cn.allbs.constant.ParamConstant;
+import cn.allbs.constant.StringPoolConstant;
 import cn.allbs.enums.PollutantItemsLimitDayEnum;
 import cn.allbs.enums.PollutantItemsLimitHourEnum;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class AqiUtil {
      */
     public Map<String, Object> countRealAqi(Map<String, Double> pollutantValueMap, boolean isDay) {
         Map<String, Object> aqiMap = new HashMap<>(5);
-        if (MapUtil.isNotEmpty(pollutantValueMap)) {
+        if (CommonUtil.isNotEmpty(pollutantValueMap)) {
             // aqi
             double maxAqi = 0;
             // 主要污染物
@@ -67,8 +66,8 @@ public class AqiUtil {
                 return null;
             }
             aqiMap.put(CommonConstant.AQI, maxAqi);
-            aqiMap.put(CommonConstant.PRIMARY_POLLUTANT, CollUtil.join(primaryP, ","));
-            aqiMap.put(CommonConstant.EXCESSIVE_POLLUTANT, CollUtil.join(exP, ","));
+            aqiMap.put(CommonConstant.PRIMARY_POLLUTANT, String.join(StringPoolConstant.COMMA, primaryP));
+            aqiMap.put(CommonConstant.EXCESSIVE_POLLUTANT, String.join(StringPoolConstant.COMMA, exP));
         }
         return aqiMap;
     }

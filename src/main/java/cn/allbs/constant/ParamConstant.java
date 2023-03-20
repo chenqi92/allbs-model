@@ -1,6 +1,6 @@
 package cn.allbs.constant;
 
-import cn.hutool.core.collection.CollUtil;
+import cn.allbs.utils.CommonUtil;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface ParamConstant {
     /**
      * 空气质量分指数
      */
-    List<Integer> I_AQI = CollUtil.list(true, 0, 50, 100, 150, 200, 300, 400, 500);
+    List<Integer> I_AQI = CommonUtil.list(true, 0, 50, 100, 150, 200, 300, 400, 500);
 
     /**
      * 首要污染物最小标准 （AQI 大于此数，IAQI最大的即为首要污染物 可以为多项）
