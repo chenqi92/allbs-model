@@ -31,12 +31,12 @@ public class DateStaticsSectionUtil {
      * @param pattern   格式化
      * @return Map
      */
-    public Map<String, BigDecimal> minuteSection(LocalDateTime startTime, LocalDateTime endTime, int interval, String pattern) {
+    public <T> Map<String, T> minuteSection(LocalDateTime startTime, LocalDateTime endTime, int interval, String pattern, T defaultValue) {
         Duration duration = Duration.between(startTime, endTime);
         int num = BigDecimal.valueOf(Math.ceil(duration.toMinutes() * (float) 4 / 3 + 1)).intValue();
-        Map<String, BigDecimal> result = new LinkedHashMap<>(num);
+        Map<String, T> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
-            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
+            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
             startTime = startTime.plus(interval, ChronoUnit.MINUTES);
         }
         return result;
@@ -52,8 +52,8 @@ public class DateStaticsSectionUtil {
      * @param interval  间隔分钟数
      * @return Map
      */
-    public Map<String, BigDecimal> minuteSection(LocalDateTime startTime, LocalDateTime endTime, int interval) {
-        return minuteSection(startTime, endTime, interval, "MM-dd HH:mm");
+    public <T> Map<String, T> minuteSection(LocalDateTime startTime, LocalDateTime endTime, int interval, T defaultValue) {
+        return minuteSection(startTime, endTime, interval, "MM-dd HH:mm", defaultValue);
     }
 
     /**
@@ -66,8 +66,8 @@ public class DateStaticsSectionUtil {
      * @param pattern   格式化
      * @return Map
      */
-    public Map<String, BigDecimal> minuteSection(LocalDateTime startTime, LocalDateTime endTime, String pattern) {
-        return minuteSection(startTime, endTime, 1, pattern);
+    public <T> Map<String, T> minuteSection(LocalDateTime startTime, LocalDateTime endTime, String pattern, T defaultValue) {
+        return minuteSection(startTime, endTime, 1, pattern, defaultValue);
     }
 
     /**
@@ -79,8 +79,8 @@ public class DateStaticsSectionUtil {
      * @param endTime   结束时间
      * @return Map
      */
-    public Map<String, BigDecimal> minuteSection(LocalDateTime startTime, LocalDateTime endTime) {
-        return minuteSection(startTime, endTime, 1, "MM-dd HH:mm");
+    public <T> Map<String, T> minuteSection(LocalDateTime startTime, LocalDateTime endTime, T defaultValue) {
+        return minuteSection(startTime, endTime, 1, "MM-dd HH:mm", defaultValue);
     }
 
     /**
@@ -93,12 +93,12 @@ public class DateStaticsSectionUtil {
      * @param pattern   格式化
      * @return map
      */
-    public Map<String, BigDecimal> daySection(LocalDate startTime, LocalDate endTime, String pattern) {
+    public <T> Map<String, T> daySection(LocalDate startTime, LocalDate endTime, String pattern, T defaultValue) {
         Period betweenDays = Period.between(startTime, endTime);
         int num = BigDecimal.valueOf(Math.ceil(betweenDays.getDays() * (float) 4 / 3 + 1)).intValue();
-        Map<String, BigDecimal> result = new LinkedHashMap<>(num);
+        Map<String, T> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
-            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
+            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
             startTime = startTime.plus(1, ChronoUnit.DAYS);
         }
         return result;
@@ -113,8 +113,8 @@ public class DateStaticsSectionUtil {
      * @param endTime   结束时间
      * @return map
      */
-    public Map<String, BigDecimal> daySection(LocalDate startTime, LocalDate endTime) {
-        return daySection(startTime, endTime, "MM-dd");
+    public <T> Map<String, T> daySection(LocalDate startTime, LocalDate endTime, T defaultValue) {
+        return daySection(startTime, endTime, "MM-dd", defaultValue);
     }
 
     /**
@@ -127,12 +127,12 @@ public class DateStaticsSectionUtil {
      * @param pattern  格式化
      * @return Map
      */
-    public Map<String, BigDecimal> dayHour(LocalDate date, int interval, String pattern) {
+    public <T> Map<String, T> dayHour(LocalDate date, int interval, String pattern, T defaultValue) {
         LocalDateTime startTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
         LocalDateTime endTime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
-        Map<String, BigDecimal> result = new LinkedHashMap<>(33);
+        Map<String, T> result = new LinkedHashMap<>(33);
         while (startTime.isBefore(endTime)) {
-            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
+            result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
             startTime = startTime.plus(interval, ChronoUnit.HOURS);
         }
         return result;
@@ -147,8 +147,8 @@ public class DateStaticsSectionUtil {
      * @param pattern 格式化
      * @return Map
      */
-    public Map<String, BigDecimal> dayHour(LocalDate date, String pattern) {
-        return dayHour(date, 1, pattern);
+    public <T> Map<String, T> dayHour(LocalDate date, String pattern, T defaultValue) {
+        return dayHour(date, 1, pattern, defaultValue);
     }
 
     /**
@@ -160,8 +160,8 @@ public class DateStaticsSectionUtil {
      * @param interval 间隔小时数
      * @return Map
      */
-    public Map<String, BigDecimal> dayHour(LocalDate date, int interval) {
-        return dayHour(date, interval, "HH");
+    public <T> Map<String, T> dayHour(LocalDate date, int interval, T defaultValue) {
+        return dayHour(date, interval, "HH", defaultValue);
     }
 
     /**
@@ -172,8 +172,8 @@ public class DateStaticsSectionUtil {
      * @param date 某天日期
      * @return Map
      */
-    public Map<String, BigDecimal> dayHour(LocalDate date) {
-        return dayHour(date, 1, "HH");
+    public <T> Map<String, T> dayHour(LocalDate date, T defaultValue) {
+        return dayHour(date, 1, "HH", defaultValue);
     }
 
     /**
@@ -186,12 +186,12 @@ public class DateStaticsSectionUtil {
      * @param pattern 格式化
      * @return Map
      */
-    public Map<String, BigDecimal> monthDay(int year, int month, String pattern) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>(41);
+    public <T> Map<String, T> monthDay(int year, int month, String pattern, T defaultValue) {
+        Map<String, T> result = new LinkedHashMap<>(41);
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plus(1, ChronoUnit.MONTHS);
         while (startDate.isBefore(endDate)) {
-            result.put(startDate.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
+            result.put(startDate.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
             startDate = startDate.plus(1, ChronoUnit.DAYS);
         }
         return result;
@@ -206,8 +206,8 @@ public class DateStaticsSectionUtil {
      * @param month 月
      * @return Map
      */
-    public Map<String, BigDecimal> monthDay(int year, int month) {
-        return monthDay(year, month, "MM-dd");
+    public <T> Map<String, T> monthDay(int year, int month, T defaultValue) {
+        return monthDay(year, month, "MM-dd", defaultValue);
     }
 
     /**
@@ -219,11 +219,11 @@ public class DateStaticsSectionUtil {
      * @param pattern 格式化
      * @return Map
      */
-    public Map<String, BigDecimal> yearMonth(int year, String pattern) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>(17);
+    public <T> Map<String, T> yearMonth(int year, String pattern, T defaultValue) {
+        Map<String, T> result = new LinkedHashMap<>(17);
         for (int i = 1; i <= ParamConstant.MONTH_COUNT; i++) {
             LocalDate date = LocalDate.of(year, i, 1);
-            result.put(date.format(DateTimeFormatter.ofPattern(pattern)), new BigDecimal(0));
+            result.put(date.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
         }
         return result;
     }
@@ -236,7 +236,7 @@ public class DateStaticsSectionUtil {
      * @param year 年
      * @return Map
      */
-    public Map<String, BigDecimal> yearMonth(int year) {
-        return yearMonth(year, "MM");
+    public <T> Map<String, T> yearMonth(int year, T defaultValue) {
+        return yearMonth(year, "MM", defaultValue);
     }
 }
