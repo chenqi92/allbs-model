@@ -5,11 +5,31 @@
 <dependency>
   <groupId>cn.allbs</groupId>
   <artifactId>allbs-model</artifactId>
-  <version>0.5.0</version>
+  <version>0.8.1</version>
 </dependency>
 ```
 
 ## 工具类
+### 个人信息随机生成
+![](https://nas.allbs.cn:9006/cloudpic/2024/03/7790a3b8c4f9afe5358781d07193f242.png)
+#### 姓名生成
+```java
+// 根据权重随机
+ChineseUtil.getRandomChineseName();
+
+// 完全随机
+ChineseUtil.getRandomChineseName(false);
+```
+
+#### 手机号生成
+```java
+PhoneNumberGenerator.generateRandomPhoneNumber();
+```
+#### 身份证号生成
+```java
+IDCardGenerator.generateRandomIDCard(false);
+```
+
 ### JBF293K报文解析
 ```java
 JBF293KMapper jbf293KMapper = new JBF293KMapper();
