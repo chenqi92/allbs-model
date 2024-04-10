@@ -37,7 +37,7 @@ public class DateStaticsSectionUtil {
         Map<String, T> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
             result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
-            startTime = startTime.plus(interval, ChronoUnit.MINUTES);
+            startTime = startTime.plusMinutes(interval);
         }
         return result;
     }
@@ -99,7 +99,7 @@ public class DateStaticsSectionUtil {
         Map<String, T> result = new LinkedHashMap<>(num);
         while (startTime.isBefore(endTime)) {
             result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
-            startTime = startTime.plus(1, ChronoUnit.DAYS);
+            startTime = startTime.plusDays(1);
         }
         return result;
     }
@@ -133,7 +133,7 @@ public class DateStaticsSectionUtil {
         Map<String, T> result = new LinkedHashMap<>(33);
         while (startTime.isBefore(endTime)) {
             result.put(startTime.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
-            startTime = startTime.plus(interval, ChronoUnit.HOURS);
+            startTime = startTime.plusHours(interval);
         }
         return result;
     }
@@ -189,10 +189,10 @@ public class DateStaticsSectionUtil {
     public <T> Map<String, T> monthDay(int year, int month, String pattern, T defaultValue) {
         Map<String, T> result = new LinkedHashMap<>(41);
         LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.plus(1, ChronoUnit.MONTHS);
+        LocalDate endDate = startDate.plusMonths(1);
         while (startDate.isBefore(endDate)) {
             result.put(startDate.format(DateTimeFormatter.ofPattern(pattern)), defaultValue);
-            startDate = startDate.plus(1, ChronoUnit.DAYS);
+            startDate = startDate.plusDays(1);
         }
         return result;
     }
