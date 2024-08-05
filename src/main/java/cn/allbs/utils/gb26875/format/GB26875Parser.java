@@ -132,23 +132,14 @@ public class GB26875Parser implements Configured<GB26875Parser>, Closeable {
      * @throws IOException
      */
     public String readSourceAddress() throws IOException {
-        // TODO 源mac地址获取方式待验证 并通过目的地址获取ip
         StringBuilder sb = new StringBuilder();
         count = PacketElement.SOURCE_ADDRESS.getLen();
-//        short[] sourceAddress = new short[PacketElement.SOURCE_ADDRESS.getLen()];
         for (int i = 0; i < count; i++) {
-//            sourceAddress[i] = (short) (dataOutputStream.readByte() & 0xff);
-            sb.append((short) (dataOutputStream.readByte() & 0xff));
-            if (i != count - 1) {
-                sb.append(StringPoolConstant.COLON);
+            if (sb.length() > 0) {
+                sb.append(":");
             }
+            sb.append(String.format("%02X", dataOutputStream.readByte()));
         }
-//        for (int i = 0; i < count; i++) {
-//            sb.append(dataOutputStream.readByte() & 0xff);
-//            if (i != count - 1) {
-//                sb.append(StringPool.COLON);
-//            }
-//        }
         return sb.toString();
     }
 
@@ -159,23 +150,14 @@ public class GB26875Parser implements Configured<GB26875Parser>, Closeable {
      * @throws IOException
      */
     public String readTargetAddress() throws IOException {
-        // TODO 目的mac地址获取方式待验证 并通过目的地址获取ip
         StringBuilder sb = new StringBuilder();
         count = PacketElement.TARGET_ADDRESS.getLen();
-//        short[] targetAddress = new short[count];
         for (int i = 0; i < count; i++) {
-//            sourceAddress[i] = (short) (dataOutputStream.readByte() & 0xff);
-            sb.append((short) (dataOutputStream.readByte() & 0xff));
-            if (i != count - 1) {
-                sb.append(StringPoolConstant.COLON);
+            if (sb.length() > 0) {
+                sb.append(":");
             }
+            sb.append(String.format("%02X", dataOutputStream.readByte()));
         }
-//        for (int i = 0; i < count; i++) {
-//            sb.append(dataOutputStream.readByte() & 0xff);
-//            if (i != count - 1) {
-//                sb.append(StringPool.COLON);
-//            }
-//        }
         return sb.toString();
     }
 
