@@ -361,14 +361,15 @@ public class AsciiUtil {
      * @return 转换后的一个字节整数
      */
     public static short bytesToShort(byte[] bytes, ByteOrder byteOrder) {
-        if (bytes.length == 1) {
+        if (bytes.length < 2) {
             return (short) (bytes[0] & 0xff);
         }
         if (ByteOrder.LITTLE_ENDIAN == byteOrder) {
-            //小端模式，数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
-            return (short) (getLow4FromByte(bytes[0]) << 4 | getLow4FromByte(bytes[1]));
+            // 小端模式，低字节在前
+            return (short) ((bytes[1] & 0xFF) << 8 | (bytes[0] & 0xFF));
         } else {
-            return (short) (getLow4FromByte(bytes[1]) << 4 | getLow4FromByte(bytes[0]));
+            // 大端模式，高字节在前
+            return (short) ((bytes[0] & 0xFF) << 8 | (bytes[1] & 0xFF));
         }
     }
 

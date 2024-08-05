@@ -22,7 +22,7 @@
         <validation.version>2.0.1.Final</validation.version>
         <jackson.version>2.14.2</jackson.version>
         <javax-json.version>1.0</javax-json.version>
-        <guava.verison>33.0.0-jre</guava.verison>
+        <guava.verison>33.2.1-jre</guava.verison>
         <spring.checkstyle.plugin>0.0.29</spring.checkstyle.plugin>
     </properties>
 
@@ -67,7 +67,7 @@
         </license>
     </licenses>
     <scm>
-        <tag>V0.8.0</tag>
+        <tag>V0.8.1</tag>
         <url>git@github.com:chenqi92/allbs-model.git</url>
         <connection>scm:git:git@github.com:chenqi92/allbs-model.git</connection>
         <developerConnection>scm:git:git@github.com:chenqi92/allbs-model.git</developerConnection>

@@ -251,7 +251,7 @@ public class GB26875Parser implements Configured<GB26875Parser>, Closeable {
      */
     public boolean readCheck() throws IOException, GB26875Exception {
         // 需要计算校验和的范围
-        byte[] needCheckBytes = Arrays.copyOfRange(msgBytes, PacketElement.HEADER.getLen(), msgBytes.length - PacketElement.VERIFY.getLen());
+        byte[] needCheckBytes = Arrays.copyOfRange(msgBytes, PacketElement.HEADER.getLen(), msgBytes.length - PacketElement.VERIFY.getLen() - PacketElement.FOOTER.getLen());
         // 待校验位长度
         byte needCheckB = dataOutputStream.readByte();
         byte b = AsciiUtil.sumCheck(needCheckBytes, PacketElement.VERIFY.getLen())[0];
