@@ -86,7 +86,9 @@ public class Type2Parser extends AbstractParser {
     protected void readPartDesc() throws IOException {
         byte[] partDesc = new byte[PART_DESC.getConstNum()];
         for (int i = 0; i < PART_DESC.getConstNum(); i++) {
-            partDesc[i] = this.dataOutputStream.readByte();
+//            partDesc[i] = this.dataOutputStream.readByte();
+            // 高低位翻转
+            partDesc[PART_DESC.getConstNum() - i - 1] = this.dataOutputStream.readByte();
         }
         List<String> list = Type2SSEnum.binaryTrans(partDesc);
         this.dataMap.put(PART_DESC.getConstDefined(), String.join(StringPoolConstant.COMMA, list));
