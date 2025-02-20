@@ -11,7 +11,7 @@
 
 ## 工具类
 ### 个人信息随机生成
-![](https://nas.allbs.cn:9006/cloudpic/2024/03/7790a3b8c4f9afe5358781d07193f242.png)
+![](https://mf.alllf.com/cloudpic/2024/03/7790a3b8c4f9afe5358781d07193f242.png)
 #### 姓名生成
 ```java
 // 根据权重随机
@@ -36,16 +36,16 @@ JBF293KMapper jbf293KMapper = new JBF293KMapper();
 System.out.println(jbf293KMapper.readValue(bytes, Map.class));
 ```
 #### 解析示例
-![image-20230223134717092](https://nas.allbs.cn:9006/cloudpic/2023/02/144504d4725cbbc6bdd78e2dfa3e9ed8.png)
-![image-20230223142712393](https://nas.allbs.cn:9006/cloudpic/2023/02/f273b83c4bae709c7ba4c606dcc6725c.png)
-![image-20230223154854847](https://nas.allbs.cn:9006/cloudpic/2023/02/9bc4dda82d26129c592d105a6edace38.png)
+![image-20230223134717092](https://mf.alllf.com/cloudpic/2023/02/144504d4725cbbc6bdd78e2dfa3e9ed8.png)
+![image-20230223142712393](https://mf.alllf.com/cloudpic/2023/02/f273b83c4bae709c7ba4c606dcc6725c.png)
+![image-20230223154854847](https://mf.alllf.com/cloudpic/2023/02/9bc4dda82d26129c592d105a6edace38.png)
 
 ### GB26875报文解析
 ```java
 GB26875Mapper gb26875Mapper = new GB26875Mapper();
 Map<String, Object> map = gb26875Mapper.readValue(bytes, Map.class);
 ```
-![image-20230302092553966](https://nas.allbs.cn:9006/cloudpic/2023/03/4d19de823782d9f6f66ea330aecf81a6.png)
+![image-20230302092553966](https://mf.alllf.com/cloudpic/2023/03/4d19de823782d9f6f66ea330aecf81a6.png)
 
 ### SFJK200 报文生成&解析
 #### 生成
@@ -64,11 +64,11 @@ byte[] bytes = sfjk200Mapper.writeDataAsByteArray(map);
 ```
 
 
-![image-20230310143214803](https://nas.allbs.cn:9006/cloudpic/2023/03/c44cbd682ffce4183dc39b3b3a497e0f.png)
+![image-20230310143214803](https://mf.alllf.com/cloudpic/2023/03/c44cbd682ffce4183dc39b3b3a497e0f.png)
 
 #### 解析
 
-![image-20230309162532082](https://nas.allbs.cn:9006/cloudpic/2023/03/a87785f0dbbf9982d772b17288bc9b85.png)
+![image-20230309162532082](https://mf.alllf.com/cloudpic/2023/03/a87785f0dbbf9982d772b17288bc9b85.png)
 
 ```java
 byte[] bytes = new byte[9];
@@ -85,11 +85,11 @@ SFJK200Mapper sfjk200Mapper = new SFJK200Mapper();
 System.out.println(sfjk200Mapper.readValue(bytes, 0x0000, Map.class));
 ```
 
-![image-20230309162610293](https://nas.allbs.cn:9006/cloudpic/2023/03/2cf95a3b15b3e3bcfb700fa9f6f2f2b5.png)
+![image-20230309162610293](https://mf.alllf.com/cloudpic/2023/03/2cf95a3b15b3e3bcfb700fa9f6f2f2b5.png)
 
-![image-20230310103906086](https://nas.allbs.cn:9006/cloudpic/2023/03/f5dd835057b1134f52ca6f4db6faf43b.png)
+![image-20230310103906086](https://mf.alllf.com/cloudpic/2023/03/f5dd835057b1134f52ca6f4db6faf43b.png)
 
-![image-20230310103915347](https://nas.allbs.cn:9006/cloudpic/2023/03/b919dcc2cd6d419957d795acb4a4ec80.png)
+![image-20230310103915347](https://mf.alllf.com/cloudpic/2023/03/b919dcc2cd6d419957d795acb4a4ec80.png)
 
 ```java
 byte[] bytes = new byte[13];
@@ -121,7 +121,7 @@ map.forEach((k, v) -> {
 });
 ```
 
-![image-20230310104125705](https://nas.allbs.cn:9006/cloudpic/2023/03/5ec825a0f4da6d491585985723e55478.png)
+![image-20230310104125705](https://mf.alllf.com/cloudpic/2023/03/5ec825a0f4da6d491585985723e55478.png)
 
 
 ### 大气aqi计算类 AqiUtil
